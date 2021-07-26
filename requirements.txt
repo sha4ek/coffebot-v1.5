@@ -1,0 +1,4 @@
+Cybernator==0.6.3
+discord.py==1.7.3
+jishaku==2.1.0
+nekos.py==1.0.3
