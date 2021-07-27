@@ -108,6 +108,10 @@ async def reload(ctx, extension):
         description='**⚠ Модуль {extension} перезагружен**',
         color=ctx.author.color)
     await ctx.send(embed=emb)
+    
+@Bot.command(aliases=['place-react'])
+async def place_react(ctx, message: discord.Message, reaction: discord.Emoji):
+    await message.add_reaction(reaction)
 
 token = os.environ.get('Token')
 
