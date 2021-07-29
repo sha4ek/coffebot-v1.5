@@ -1,14 +1,20 @@
-import discord
+import discord, time
 from discord.ext import commands
-from config import Postfix
+from config import Postfix, Prefix
+
 
 class moderation(commands.Cog):
     def __init__(self, Bot):
         self.Bot = Bot
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['кик', 'исключить'],
+        brief='Исключить участника',
+        usage=f'{Prefix}kick [участник] (причина)')
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.User, *, reason = None):
+    @commands.bot_has_permissions(kick_members=True)
+    async def kick(self, ctx, member: discord.Member, *, reason=None):
         if member == ctx.author:
             emb = discord.Embed(
                 title='Ошибка:',
@@ -44,9 +50,14 @@ class moderation(commands.Cog):
             await member.send(embed=embdm)
             await ctx.guild.kick(member)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['бан', 'заблокировать'],
+        brief='Заблокировать участника',
+        usage=f'{Prefix}ban [участник] (причина)')
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: discord.User, *, reason = None):
+    @commands.bot_has_permissions(ban_members=True)
+    async def ban(self, ctx, member: discord.User, *, reason=None):
         if member == ctx.author:
             emb = discord.Embed(
                 title='Ошибка:',
@@ -82,8 +93,13 @@ class moderation(commands.Cog):
             await member.send(embed=embdm)
             await ctx.guild.ban(member, reason=reason)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['разбан', 'разблокировать'],
+        brief='Разблокировать участника',
+        usage=f'{Prefix}unban [участник] (причина)')
     @commands.has_permissions(ban_members=True)
+    @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx, member: discord.User):
         if member == ctx.author:
             emb = discord.Embed(
@@ -100,7 +116,11 @@ class moderation(commands.Cog):
             await ctx.guild.unban(member)
             await ctx.send(embed=emb)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['эмбед', 'emb', 'написать'],
+        brief='Написать сообщение в Embed',
+        usage=f'{Prefix}embed [текст]')
     @commands.has_permissions(manage_guild=True)
     async def embed(self, ctx, *, text):
         text = text.split('|')
@@ -116,8 +136,13 @@ class moderation(commands.Cog):
         await ctx.message.delete()
         await ctx.send(embed=emb)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['клеар', 'очистить'],
+        brief='Удалить из чата определённое количество сообщений',
+        usage=f'{Prefix}clear [количество сообщений]')
     @commands.has_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
     async def clear(self, ctx, amount):
         emb = discord.Embed(
             title='Очистка чата:',
@@ -126,7 +151,8 @@ class moderation(commands.Cog):
             color=ctx.author.color)
         await ctx.channel.purge(limit=int(amount)+1)
         await ctx.send(embed=emb)
- 
+
+
 def setup(Bot):
     Bot.add_cog(moderation(Bot))
-    print('[Cogs] Moderation\'s load!')
+    print(f'[{time.strftime("%H:%M")}] Cogs: Moderation\'s load!')
