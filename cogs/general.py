@@ -1,12 +1,18 @@
-import discord, random
+import discord, random, time
 from discord.ext import commands
+from config import Prefix
+
 
 class general(commands.Cog):
     def __init__(self, Bot):
         self.Bot = Bot
 
-    @commands.command()
-    async def avatar(self, ctx, member: discord.Member = None):
+
+    @commands.command(
+        aliases=['аватар'],
+        brief='Вывести аватарку пользователя в чат с возможностью скачивания',
+        usage=f'{Prefix}avatar (участник)')
+    async def avatar(self, ctx, member: discord.Member=None):
         if member == None: user = ctx.author
         else: user = member
 
@@ -19,7 +25,11 @@ class general(commands.Cog):
         await ctx.send(embed=emb1)
         await ctx.send(embed=emb2)
 
-    @commands.command(aliases=['flip-text'])
+
+    @commands.command(
+        aliases=['flip-text', 'перевернуть'],
+        brief='Перевернуть ваш текст',
+        usage=f'{Prefix}flip-text [текст]')
     async def flip_text(self, ctx, *, text):
         emb = discord.Embed(
             title='Перевёрнутый текст:',
@@ -28,19 +38,11 @@ class general(commands.Cog):
             color=ctx.author.color)
         await ctx.send(embed=emb)
 
-    @commands.command()
-    async def latency(self, ctx):
-        if self.Bot.ws.latency < 250: ping = '**🟢 Нормальный пинг**'
-        else: ping = '**🔴 Плохой пинг**'
 
-        emb = discord.Embed(
-            title='Текущая задержка бота:',
-            description=f'**⏱ {self.Bot.ws.latency * 1000:.0f} мс**\n'
-                        f'{ping}',
-            color=ctx.author.color)
-        await ctx.send(embed=emb)
-
-    @commands.command()
+    @commands.command(
+        aliases=['цвет'],
+        brief='Сгенерировать цвет в виде HEX',
+        usage=f'{Prefix}color')
     async def color(self, ctx):
         clr = (random.randint(0,16777215))
         
@@ -50,18 +52,22 @@ class general(commands.Cog):
             color=clr)
         await ctx.send(embed=emb)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['предложить'],
+        brief='Отправить идею для бота разработчикам',
+        usage=f'{Prefix}suggest [идея]')
     async def suggest(self, ctx, *, suggestion):
         channel = self.Bot.get_channel(869152457094209586)
 
         embg = discord.Embed(
             title='Новая идея:',
-            description=f'**🔔 Спасибо за идею, постараемся реализовать**',\
+            description=f'**🔔 Спасибо за идею, постараемся реализовать**',
             color=ctx.author.color)
 
         embb = discord.Embed(
             title='Новая идея:',
-            description=f'**😀 Предложил:** {ctx.author}\n'
+            description=f'**😀 Предложил:** {ctx.author} ({ctx.author.id})\n'
                         f'**⛺ Сервер:** {ctx.guild.name}\n'
                         f'**🌟 Идея:** {suggestion}',
             color=ctx.author.color)
@@ -69,7 +75,11 @@ class general(commands.Cog):
         await ctx.send(embed=embg)
         await channel.send(embed=embb)
 
-    @commands.command(aliases=['bug-report'])
+
+    @commands.command(
+        aliases=['bug-report', 'баг-репорт'],
+        brief='Отправить баг бота разработчикам',
+        usage=f'{Prefix}bug-report [баг]')
     async def bug_report(self, ctx, *, bug):
         channel = self.Bot.get_channel(869196062374629386)
 
@@ -80,7 +90,7 @@ class general(commands.Cog):
 
         embb = discord.Embed(
             title='Репорт на баг:',
-            description=f'**😀 Сообщил:** {ctx.author}\n'
+            description=f'**😀 Сообщил:** {ctx.author} ({ctx.author.id})\n'
                         f'**⛺ Сервер:** {ctx.guild.name}\n'
                         f'**🌟 Баг:** {bug}',
             color=ctx.author.color)
@@ -88,6 +98,7 @@ class general(commands.Cog):
         await ctx.send(embed=embg)
         await channel.send(embed=embb)
 
+
 def setup(Bot):
     Bot.add_cog(general(Bot))
-    print('[Cogs] General\'s load!')
+    print(f'[{time.strftime("%H:%M")}] Cogs: General\'s load!')
