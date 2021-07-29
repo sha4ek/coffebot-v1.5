@@ -1,11 +1,18 @@
-import discord, random, nekos, asyncio
+import discord, random, nekos, asyncio, time
 from discord.ext import commands
+from config import Prefix
+
 
 class fun(commands.Cog):
     def __init__(self, Bot):
         self.Bot = Bot
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['кнб'],
+        brief='Игра "Камень ножницы бумага"',
+        usage=f'{Prefix}rps')
+    @commands.bot_has_permissions(add_reactions=True, manage_messages=True)
     async def rps(self, ctx):
         solutions = ['🧱', '✂️', '📄']
         winner = 'Ничья**'
@@ -47,7 +54,11 @@ class fun(commands.Cog):
             for r in solutions:
                 await msg.clear_reaction(r)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['поцеловать'],
+        brief='Реакция "Поцеловать"',
+        usage=f'{Prefix}kiss [участник]')
     async def kiss(self, ctx, member: discord.Member):
         if member == ctx.message.author:
             emb = discord.Embed(
@@ -63,7 +74,11 @@ class fun(commands.Cog):
             emb.set_image(url=nekos.img('kiss'))
             await ctx.send(embed=emb)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['обнять'],
+        brief='Реакция "Обнять"',
+        usage=f'{Prefix}hug [участник]')
     async def hug(self, ctx, member: discord.Member):
         if member == ctx.message.author:
             emb = discord.Embed(
@@ -79,7 +94,11 @@ class fun(commands.Cog):
             emb.set_image(url=nekos.img('hug'))
             await ctx.send(embed=emb)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['пощёчина'],
+        brief='Реакция "Пощёчина"',
+        usage=f'{Prefix}slap [участник]')
     async def slap(self, ctx, member: discord.Member):
         if member == ctx.message.author:
             emb = discord.Embed(
@@ -95,7 +114,11 @@ class fun(commands.Cog):
             emb.set_image(url=nekos.img('slap'))
             await ctx.send(embed=emb)
 
-    @commands.command()
+
+    @commands.command(
+        aliases=['погладить'],
+        brief='Реакция "Погладить"',
+        usage=f'{Prefix}pat [участник]')
     async def pat(self, ctx, member: discord.Member):
         if member == ctx.message.author:
             emb = discord.Embed(
@@ -111,15 +134,7 @@ class fun(commands.Cog):
             emb.set_image(url=nekos.img('pat'))
             await ctx.send(embed=emb)
 
-    @commands.command(aliases=['8ball'])
-    async def ball(self, ctx, *, question):
-        message = ['Нет', 'Да', 'Возможно', 'Опредленно нет', 'Попробуй ещё раз', 'Даже не думай!', 'Никогда!'] 
-        emb = discord.Embed(
-            title='Магический шар',
-            description=f'**🔮 {random.choice(message)}**',
-            color=ctx.author.color)
-        await ctx.send(embed=emb)
 
 def setup(Bot):
     Bot.add_cog(fun(Bot))
-    print('[Cogs] Fun\'s load!')
+    print(f'[{time.strftime("%H:%M")}] Cogs: Fun\'s load!')
