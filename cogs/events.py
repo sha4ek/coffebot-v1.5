@@ -49,12 +49,7 @@ class events(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
-            emb = discord.Embed(
-                title='Ошибка:',
-                description='**💢 Данная команда не найдена**\n'
-                            f'**💯 Для ознакомления со списком команд напиши:** {Prefix}help',
-                color=ctx.author.color)
-            await ctx.send(embed=emb)
+            pass
         elif isinstance(error, commands.BotMissingPermissions):
             emb = discord.Embed(
                 title='Ошибка:',
