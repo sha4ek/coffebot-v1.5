@@ -44,11 +44,11 @@ async def on_ready():
             file = open("uptime.txt", "w")
             file.write(f'{minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
             file.close()
-        elif hours != 0:
+        if hours != 0:
             file = open("uptime.txt", "w")
             file.write(f'{hours} {BotPostfix(hours, "час", "часа", "часов")} {minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
             file.close()
-        elif days != 0:
+        if days != 0:
             file = open("uptime.txt", "w")
             file.write(f'{days} {BotPostfix(days, "день", "дня", "дней")} {hours} {BotPostfix(hours, "час", "часа", "часов")} {minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
             file.close()
