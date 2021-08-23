@@ -85,6 +85,30 @@ class Commands(commands.Cog):
             await ctx.send(embed=emb)
 
 
+    @commands.command()
+    async def embed(self, ctx, *, text=None):
+        if text != None:
+            text = text.split('|')
+            if '|' in ctx.message.content:
+                emb = discord.Embed(title=text[1], description=text[0], color=BotBasicColor)
+                for a in ctx.message.attachments:
+                    if a.url != None:
+                        emb.set_image(url=a.url)
+                await ctx.message.delete()
+                await ctx.send(embed=emb)
+            else:
+                emb = discord.Embed(description=text[0], color=BotBasicColor)
+                for a in ctx.message.attachments:
+                    if a.url != None:
+                        emb.set_image(url=a.url)
+                await ctx.message.delete()
+                await ctx.send(embed=emb)
+        else:
+            emb = discord.Embed(title=f'Ошибка:', description='Укажи что надо написать',
+                color=BotErrorColor)
+            await ctx.send(embed=emb)
+
+
 def setup(Bot):
     Bot.add_cog(Commands(Bot))
     print(f'[MODULES] Commands\'s load!')
