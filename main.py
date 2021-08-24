@@ -1,58 +1,19 @@
-import discord, os, asyncio
+import discord
+import os
 from discord.ext import commands
-from utils.config import BotPrefix, BotToken, BotPostfix
+from utils.config import BotPrefix, BotToken # импортируем конфиг бота
 
 
 BotIntents = discord.Intents.default()
 BotIntents.members = True
 Bot = commands.Bot(command_prefix=BotPrefix, intents=BotIntents)
-Bot.remove_command('help')
+Bot.remove_command('help') # убираем стандартный help
+Bot.load_extension('jishaku') # добавляем модуль jishaku для самописных команд
 
 
-for file in os.listdir('./modules'):
-    if file.endswith('.py'):
-        Bot.load_extension(f'modules.{file[:-3]}')
-
-
-@Bot.event
-async def on_ready():
-    print(f'[SYSTEM] {Bot.user.name}\'s online!')
-
-    seconds=0
-    minutes=0
-    hours=0
-    days=0
-
-    while True:
-        seconds += 1
-
-        if seconds == 60:
-            minutes += 1
-            seconds = 0
-        if minutes == 60:
-            hours += 1
-            minutes = 0
-        if hours == 24:
-            days += 1
-            hours = 0
-
-        if seconds != 0:
-            file = open("uptime.txt", "w")
-            file.write(f'{seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-            file.close()
-        if minutes != 0:
-            file = open("uptime.txt", "w")
-            file.write(f'{minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-            file.close()
-        if hours != 0:
-            file = open("uptime.txt", "w")
-            file.write(f'{hours} {BotPostfix(hours, "час", "часа", "часов")} {minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-            file.close()
-        if days != 0:
-            file = open("uptime.txt", "w")
-            file.write(f'{days} {BotPostfix(days, "день", "дня", "дней")} {hours} {BotPostfix(hours, "час", "часа", "часов")} {minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-            file.close()
-        await asyncio.sleep(1)
+for file in os.listdir('./modules'): # открываем папку с модулями
+    if file.endswith('.py'): # ищем файлы с расширением .py
+        Bot.load_extension(f'modules.{file[:-3]}') # загружаем их, убирая расширение .py
 
 
 Bot.run(BotToken)
