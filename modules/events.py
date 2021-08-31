@@ -1,6 +1,7 @@
-import asyncio
+import discord, asyncio
 from discord.ext import commands
-from utils.config import BotPostfix # импортируем конфиг бота
+from threading import Thread
+from utils.config import BotSettings, BotUptime, BotPostfix # импортируем конфиг бота
 
 
 class Events(commands.Cog): # создаём класс модуля с ивентами
@@ -12,41 +13,70 @@ class Events(commands.Cog): # создаём класс модуля с ивен
     async def on_ready(self): # создаём ивент запуска бота
         print(f'[SYSTEM] {self.Bot.user.name}\'s online!') # выводим событие в консоль
 
-        seconds=0
-        minutes=0
-        hours=0
-        days=0 # стандартные переменные времени
+        uptime = Thread(target=BotUptime)
+        uptime.start()
 
-        while True: # создаём цикл
-            seconds += 1 
+        while True:
+            await self.Bot.change_presence(activity=discord.Activity(
+                name=f'{BotSettings["Bot"]["Prefix"][0]}help | {len(self.Bot.guilds)} {BotPostfix(len(self.Bot.guilds), "сервер", "сервера", "серверов")}',
+                type=discord.ActivityType.watching), status=discord.Status.idle)
+            await asyncio.sleep(10)
+            await self.Bot.change_presence(activity=discord.Activity(
+                name=f'{BotSettings["Bot"]["Prefix"][0]}help | {len(self.Bot.users)} {BotPostfix(len(self.Bot.users), "пользователь", "пользователя", "пользователей")}',
+                type=discord.ActivityType.watching), status=discord.Status.idle)
+            await asyncio.sleep(10)
 
-            if seconds == 60:
-                minutes += 1
-                seconds = 0
-            if minutes == 60:
-                hours += 1
-                minutes = 0
-            if hours == 24:
-                days += 1
-                hours = 0
 
-            if seconds != 0:
-                file = open("uptime.txt", "w")
-                file.write(f'{seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-                file.close()
-            if minutes != 0:
-                file = open("uptime.txt", "w")
-                file.write(f'{minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-                file.close()
-            if hours != 0:
-                file = open("uptime.txt", "w")
-                file.write(f'{hours} {BotPostfix(hours, "час", "часа", "часов")} {minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-                file.close()
-            if days != 0:
-                file = open("uptime.txt", "w")
-                file.write(f'{days} {BotPostfix(days, "день", "дня", "дней")} {hours} {BotPostfix(hours, "час", "часа", "часов")} {minutes} {BotPostfix(minutes, "минута", "минуты", "минут")} {seconds} {BotPostfix(seconds, "секунда", "секунды", "секунд")}')
-                file.close()
-            await asyncio.sleep(1)
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        ignored = commands.CommandNotFound, commands.CommandOnCooldown
+
+        if isinstance(error, ignored):
+            pass
+
+        elif isinstance(error, commands.MissingPermissions):
+            emb = discord.Embed(title='Ошибка:',
+                description=f'**:anger: У вас отсутствуют права "{", ".join(BotSettings["Permissions"][perms] for perms in error.missing_perms)}" на использование команды!**',
+                color=BotSettings['Bot']['ErrorColor'])
+            await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            permissions = ctx.guild.me.permissions_in(ctx.channel)
+
+            if not permissions.send_messages:
+                emb = discord.Embed(title='Ошибка:',
+                    description=f'**:anger: У бота отсутствуют права "{", ".join(BotSettings["Permissions"][perms] for perms in error.missing_perms)}" на использование команды!**',
+                    color=BotSettings['Bot']['ErrorColor'])
+                await ctx.author.send(embed=emb)
+            if not permissions.embed_links:
+                await ctx.send(f'**Ошибка:\n:anger: У бота отсутствуют права "{", ".join(BotSettings["Permissions"][perms] for perms in error.missing_perms)}" на использование команды!**')
+            else:
+                emb = discord.Embed(title='Ошибка:',
+                    description=f'**:anger: У бота отсутствуют права "{", ".join(BotSettings["Permissions"][perms] for perms in error.missing_perms)}" на использование команды!**',
+                    color=BotSettings['Bot']['ErrorColor'])
+                await ctx.send(embed=emb)
+        
+        elif isinstance(error, commands.BadArgument):
+            emb = discord.Embed(title='Ошибка:',
+                description='**:anger: Вы указали неправильный аргумент!**', color=BotSettings['Bot']['ErrorColor'])
+            await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.NotOwner):
+            emb = discord.Embed(title='Ошибка:',
+                description='**:anger: Вы не разработчик бота!**', color=BotSettings['Bot']['ErrorColor'])
+            await ctx.send(embed=emb)
+
+        else:
+            channel = self.Bot.get_channel(880968020980273173)
+            emb1 = discord.Embed(title='Ошибка:', description=f'**:anger: Произошла неизвестная ошибка!**',
+                color=BotSettings['Bot']['ErrorColor'])
+            emb2 = discord.Embed(title='Ошибка:',
+                description=f'**:tent: Сервер:** {ctx.guild.name}\n'
+                            f'**:bulb: Команда:** {ctx.message.content}\n'
+                            f'**:anger: Ошибка:** ```py\n{error}\n```', color=BotSettings['Bot']['ErrorColor'])
+            await ctx.send(embed=emb1)
+            await channel.send(embed=emb2)
+            raise error
 
 
 def setup(Bot): # подключаем класс к основному файлу 
