@@ -112,6 +112,6 @@ BotSettings = {
         3600: '1 час',
         7200: '2 часа',
         21600: '6 часов'
-    }
+    },
     'BoticordToken': os.environ.get('BoticordToken')
 }
