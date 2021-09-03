@@ -4,20 +4,21 @@ from threading import Thread
 #from boticordpy import BoticordClient
 from utils.config import BotSettings, BotUptime, BotPostfix # импортируем конфиг бота
 
+
+def BoticordStats():
+    response = requests.post('https://boticord.top/api/stats')
+    response.headers = {'Authorization': BotSettings['BoticordToken']}
+    response.body = {
+        'servers': len(self.Bot.guilds),
+        'shards': self.Bot.shard_count,
+        'users': len(self.Bot.users)
+    }
+    print(response)
+
+
 class Events(commands.Cog): # создаём класс модуля с ивентами
     def __init__(self, Bot):
         self.Bot = Bot
-        
-        
-    def BoticordStats():
-        response = requests.post('https://boticord.top/api/stats')
-        response.headers = {'Authorization': BotSettings['BoticordToken']}
-        response.body = {
-            'servers': len(self.Bot.guilds),
-            'shards': self.Bot.shard_count,
-            'users': len(self.Bot.users)
-        }
-        print(response)
         
     
     #Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
