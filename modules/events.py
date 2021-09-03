@@ -1,6 +1,7 @@
-import discord, asyncio, boticordpy
+import discord, asyncio
 from discord.ext import commands
 from threading import Thread
+from boticordpy import BoticordClient
 from utils.config import BotSettings, BotUptime, BotPostfix # импортируем конфиг бота
 
 
@@ -9,7 +10,7 @@ class Events(commands.Cog): # создаём класс модуля с ивен
         self.Bot = Bot
         
     
-    Boticord = boticordpy.BoticordClient(self.Bot, BotSettings['BoticordToken'])
+    Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
 
 
     @commands.Cog.listener()
