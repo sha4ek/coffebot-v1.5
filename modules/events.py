@@ -1,4 +1,4 @@
-import discord, asyncio
+import discord, asyncio, requests
 from discord.ext import commands
 from threading import Thread
 #from boticordpy import BoticordClient
