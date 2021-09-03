@@ -31,6 +31,8 @@ class Events(commands.Cog): # создаём класс модуля с ивен
 
         uptime = Thread(target=BotUptime)
         uptime.start()
+        
+        await response
 
         while True:
             await self.Bot.change_presence(activity=discord.Activity(
