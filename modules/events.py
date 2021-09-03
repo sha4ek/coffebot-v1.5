@@ -1,19 +1,19 @@
 import discord, asyncio, requests
 from discord.ext import commands
 from threading import Thread
-#from boticordpy import BoticordClient
+from boticordpy import BoticordClient
 from utils.config import BotSettings, BotUptime, BotPostfix # импортируем конфиг бота
 
 
-def BoticordStats():
-    response = requests.post('https://boticord.top/api/stats')
-    response.headers = {'Authorization': BotSettings['BoticordToken']}
-    response.body = {
-        'servers': len(self.Bot.guilds),
-        'shards': self.Bot.shard_count,
-        'users': len(self.Bot.users)
-    }
-    print(response)
+#def BoticordStats():
+#    response = requests.post('https://boticord.top/api/stats')
+#    response.headers = {'Authorization': BotSettings['BoticordToken']}
+#    response.body = {
+#        'servers': len(self.Bot.guilds),
+#        'shards': self.Bot.shard_count,
+#        'users': len(self.Bot.users)
+#    }
+#    print(response)
 
 
 class Events(commands.Cog): # создаём класс модуля с ивентами
@@ -21,24 +21,21 @@ class Events(commands.Cog): # создаём класс модуля с ивен
         self.Bot = Bot
         
     
-    #Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
+    Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
 
 
     @commands.Cog.listener()
     async def on_ready(self): # создаём ивент запуска бота
         
-        #stats = {'servers': len(self.Bot.guilds), 'shards': self.Bot.shard_count, 'users': len(self.Bot.users)}
+        stats = {'servers': len(self.Bot.guilds), 'shards': self.Bot.shard_count, 'users': len(self.Bot.users)}
         
         print(f'[SYSTEM] {self.Bot.user.name}\'s online!') # выводим событие в консоль
         
-        #await Boticord.Bots.postStats(stats)
+        await Boticord.Bots.postStats(stats)
 
         uptime = Thread(target=BotUptime)
         uptime.start()
         
-        stats = Thread(target=BoticordStats)
-        stats.start()
-
         while True:
             await self.Bot.change_presence(activity=discord.Activity(
                 name=f'{BotSettings["Bot"]["Prefix"][0]}help | {len(self.Bot.guilds)} {BotPostfix(len(self.Bot.guilds), "сервер", "сервера", "серверов")}',
