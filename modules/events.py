@@ -1,4 +1,4 @@
-import discord, asyncio
+import discord, asyncio, boticordpy
 from discord.ext import commands
 from threading import Thread
 from utils.config import BotSettings, BotUptime, BotPostfix # импортируем конфиг бота
@@ -7,11 +7,22 @@ from utils.config import BotSettings, BotUptime, BotPostfix # импортиру
 class Events(commands.Cog): # создаём класс модуля с ивентами
     def __init__(self, Bot):
         self.Bot = Bot
+        
+    
+    Boticord = boticordpy.BoticordClient(self.Bot, BotSettings['BoticordToken'])
 
 
     @commands.Cog.listener()
     async def on_ready(self): # создаём ивент запуска бота
+        stats = {
+            'servers': len(self.Bot.guilds),
+            'shards': self.Bot.shard_count,
+            'users': len(self.Bot.users)
+        }
+        
         print(f'[SYSTEM] {self.Bot.user.name}\'s online!') # выводим событие в консоль
+        
+        await Boticord.Bots.postStats(stats)
 
         uptime = Thread(target=BotUptime)
         uptime.start()
