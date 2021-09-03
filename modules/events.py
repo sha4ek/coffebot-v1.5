@@ -15,14 +15,13 @@ class Events(commands.Cog): # создаём класс модуля с ивен
 
     @commands.Cog.listener()
     async def on_ready(self): # создаём ивент запуска бота
-        response = requests.post('https://boticord.top/api/stats',
-                                 data = {
-                                     header: {Authorization: BotSettings['BoticordToken']},
-                                     body: {
-                                         servers: len(self.Bot.guilds),
-                                         shards: self.Bot.shard_count,
-                                         users: len(self.Bot.users)}
-                                 })
+        response = requests.post('https://boticord.top/api/stats')
+        response.headers{Authorization: BotSettings['BoticordToken']}
+        response.body{
+            servers: len(self.Bot.guilds),
+            shards: self.Bot.shard_count,
+            users: len(self.Bot.users)
+        }
         
         #stats = {'servers': len(self.Bot.guilds), 'shards': self.Bot.shard_count, 'users': len(self.Bot.users)}
         
