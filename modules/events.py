@@ -17,7 +17,7 @@ class Events(commands.Cog): # создаём класс модуля с ивен
     async def on_ready(self): # создаём ивент запуска бота
         response = requests.post('https://boticord.top/api/stats',
                                  data = {
-                                     headers: {Authorization: BotSettings['BoticordToken']},
+                                     header: {Authorization: BotSettings['BoticordToken']},
                                      body: {
                                          servers: len(self.Bot.guilds),
                                          shards: self.Bot.shard_count,
