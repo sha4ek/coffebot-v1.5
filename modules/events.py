@@ -4,17 +4,12 @@ from threading import Thread
 #from boticordpy import BoticordClient
 from utils.config import BotSettings, BotUptime, BotPostfix # импортируем конфиг бота
 
-
 class Events(commands.Cog): # создаём класс модуля с ивентами
     def __init__(self, Bot):
         self.Bot = Bot
         
-    
-    #Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
-
-
-    @commands.Cog.listener()
-    async def on_ready(self): # создаём ивент запуска бота
+        
+    def BoticordStats():
         response = requests.post('https://boticord.top/api/stats')
         response.headers = {'Authorization': BotSettings['BoticordToken']}
         response.body = {
@@ -22,6 +17,14 @@ class Events(commands.Cog): # создаём класс модуля с ивен
             'shards': self.Bot.shard_count,
             'users': len(self.Bot.users)
         }
+        print(response)
+        
+    
+    #Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
+
+
+    @commands.Cog.listener()
+    async def on_ready(self): # создаём ивент запуска бота
         
         #stats = {'servers': len(self.Bot.guilds), 'shards': self.Bot.shard_count, 'users': len(self.Bot.users)}
         
@@ -32,7 +35,8 @@ class Events(commands.Cog): # создаём класс модуля с ивен
         uptime = Thread(target=BotUptime)
         uptime.start()
         
-        await response
+        stats = Thread(target=BoticordStats)
+        stats.start()
 
         while True:
             await self.Bot.change_presence(activity=discord.Activity(
