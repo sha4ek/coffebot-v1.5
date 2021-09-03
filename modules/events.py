@@ -10,11 +10,20 @@ class Events(commands.Cog): # создаём класс модуля с ивен
         self.Bot = Bot
         
     
-    Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
+    #Boticord = BoticordClient(self.Bot, BotSettings['BoticordToken'])
 
 
     @commands.Cog.listener()
     async def on_ready(self): # создаём ивент запуска бота
+        response = requests.post('https://boticord.top/api/stats',
+                                 data = {
+                                     headers: {Authorization: BotSettings['BoticordToken']},
+                                     body: {
+                                         servers: len(self.Bot.guilds),
+                                         shards: self.Bot.shard_count,
+                                         users: len(self.Bot.users)}
+                                 })
+        
         #stats = {'servers': len(self.Bot.guilds), 'shards': self.Bot.shard_count, 'users': len(self.Bot.users)}
         
         print(f'[SYSTEM] {self.Bot.user.name}\'s online!') # выводим событие в консоль
