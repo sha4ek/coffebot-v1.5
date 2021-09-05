@@ -1,10 +1,10 @@
 import discord, os
 from discord.ext import commands
-from utils.config import BotSettings
+from utils.config import BotSettings, GetPrefix
 
 
 BotIntents = discord.Intents.all()
-Bot = commands.Bot(command_prefix=BotSettings['Bot']['Prefix'], intents=BotIntents, case_insensitive=True)
+Bot = commands.Bot(command_prefix=GetPrefix, intents=BotIntents, case_insensitive=True)
 Bot.remove_command('help') # убираем стандартный help
 Bot.load_extension('jishaku') # добавляем модуль jishaku для самописных команд
 
