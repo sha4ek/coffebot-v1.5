@@ -233,6 +233,38 @@ class Moderation(commands.Cog): # создаём класс модуля ком�
             await member.remove_roles(role, reason='Размьют')
 
 
+    @commands.command()
+    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True)
+    @commands.has_permissions(manage_guild=True) 
+    async def prefix(self, ctx, prefix = None):
+        collection = BotSettings['Mongo']['Collection'].custom_prefix            
+        if prefix != None: # проверка введён ли префикс
+            if len(str(prefix)) < 3: # проверка длины префикса(нельзя больше 2 символов)
+                collection.update_one({
+                    'guild_name': ctx.guild.name,
+                    'guild_id': ctx.guild.id,
+                    'guild_owner_name': f'{ctx.guild.owner.name}#{ctx.guild.owner.discriminator}',
+                    'guild_owner_id': ctx.guild.owner.id
+                    },
+                    {'$set':{'guild_prefix': prefix}})
+
+                emb = discord.Embed(title=f'Смена префикса:',
+                    description=f'**:flashlight: Вы успешно сменили префикс на:** {prefix}',
+                    color=BotSettings['Bot']['NormalColor'])
+                await ctx.send(embed=emb)
+            else:
+                emb = discord.Embed(title='Ошибка:',
+                    description=f'**:anger: Префикс не может быть больше 2 символов!**',
+                    color=BotSettings['Bot']['ErrorColor'])
+                await ctx.send(embed=emb)
+        else:
+            emb = discord.Embed(title='Ошибка:',
+                    description=f'**:anger: Вы не указали префикс!**',
+                    color=BotSettings['Bot']['ErrorColor'])
+            await ctx.send(embed=emb)
+
+
 def setup(Bot):  # подключаем класс к основному файлу 
     Bot.add_cog(Moderation(Bot))
     print(f'[MODULES] Moderation\'s load!') # принтуем
