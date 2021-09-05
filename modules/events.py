@@ -72,7 +72,7 @@ class Events(commands.Cog): # создаём класс модуля с ивен
             await ctx.send(embed=emb)
 
         else:
-            channel = self.Bot.get_channel(880968020980273173)
+            channel = self.Bot.get_channel(BotSettings['Bot']['ErrorsLogChannel'])
             emb1 = discord.Embed(title='Ошибка:', description=f'**:anger: Произошла неизвестная ошибка!**',
                 color=BotSettings['Bot']['ErrorColor'])
             emb2 = discord.Embed(title='Ошибка:',
@@ -82,6 +82,49 @@ class Events(commands.Cog): # создаём класс модуля с ивен
             await ctx.send(embed=emb1)
             await channel.send(embed=emb2)
             raise error
+
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        collection = BotSettings['Mongo']['Collection'].custom_prefix
+        channel = self.Bot.get_channel(BotSettings['Bot']['GuildsLogChannel'])
+
+        collection.insert_one({
+            'guild_name': guild.name,
+            'guild_id': guild.id,
+            'guild_owner_name': f'{guild.owner.name}#{guild.owner.discriminator}',
+            'guild_owner_id': guild.owner.id,
+            'guild_prefix': BotSettings['Bot']['MainPrefix']
+            })
+
+        emb = discord.Embed(title='Бот добавлен на сервер:',
+            description=f'**:pencil: Название:** {guild.name}\n'
+                        f'**:id: Идентификатор:** {guild.id}\n'
+                        f'**:notebook_with_decorative_cover: Имя создателя:** {guild.owner}\n'
+                        f'**:id: Идентификатор создателя:** {guild.id}', color=BotSettings['Bot']['NormalColor'])
+        emb.set_thumbnail(url=guild.icon_url)
+        await channel.send(embed=emb)
+
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        collection = BotSettings['Mongo']['Collection'].custom_prefix
+        channel = self.Bot.get_channel(BotSettings['Bot']['GuildsLogChannel'])
+
+        collection.delete_one({
+            'guild_name': guild.name,
+            'guild_id': guild.id,
+            'guild_owner_name': f'{guild.owner.name}#{guild.owner.discriminator}',
+            'guild_owner_id': guild.owner.id,
+            })
+
+        emb = discord.Embed(title='Бот убран с сервера:',
+            description=f'**:pencil: Название:** {guild.name}\n'
+                        f'**:id: Идентификатор:** {guild.id}\n'
+                        f'**:notebook_with_decorative_cover: Имя создателя:** {guild.owner}\n'
+                        f'**:id: Идентификатор создателя:** {guild.id}', color=BotSettings['Bot']['ErrorColor'])
+        emb.set_thumbnail(url=guild.icon_url)
+        await channel.send(embed=emb)
 
 
 def setup(Bot): # подключаем класс к основному файлу 
