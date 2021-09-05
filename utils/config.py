@@ -1,4 +1,5 @@
 import os, time
+from pymongo import MongoClient
 
 
 BotSettings = {
