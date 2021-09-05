@@ -23,11 +23,11 @@ class Events(commands.Cog): # создаём класс модуля с ивен
         
         while True:
             await self.Bot.change_presence(activity=discord.Activity(
-                name=f'{BotSettings["Bot"]["Prefix"][0]}help | {len(self.Bot.guilds)} {BotPostfix(len(self.Bot.guilds), "сервер", "сервера", "серверов")}',
+                name=f'{BotSettings["Bot"]["MainPrefix"]}help | {len(self.Bot.guilds)} {BotPostfix(len(self.Bot.guilds), "сервер", "сервера", "серверов")}',
                 type=discord.ActivityType.watching), status=discord.Status.idle)
             await asyncio.sleep(10)
             await self.Bot.change_presence(activity=discord.Activity(
-                name=f'{BotSettings["Bot"]["Prefix"][0]}help | {len(self.Bot.users)} {BotPostfix(len(self.Bot.users), "пользователь", "пользователя", "пользователей")}',
+                name=f'{BotSettings["Bot"]["MainPrefix"]}help | {len(self.Bot.users)} {BotPostfix(len(self.Bot.users), "пользователь", "пользователя", "пользователей")}',
                 type=discord.ActivityType.watching), status=discord.Status.idle)
             await asyncio.sleep(10)
 
