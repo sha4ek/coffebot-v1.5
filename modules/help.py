@@ -12,7 +12,7 @@ class Help(commands.Cog): # создаём класс модуля команд�
     @commands.command()
     @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True,
-        add_reactions=True, manage_messages=True)
+        add_reactions=True)
     async def help(self, ctx): # создаём команду помощи
         emb1 = discord.Embed(title='Информационные команды:',
             description=f'**:chart_with_upwards_trend: {ctx.prefix}stats** - немного статистики бота\n'
@@ -41,7 +41,7 @@ class Help(commands.Cog): # создаём класс модуля команд�
             embs = [emb1, emb2, emb3, emb4] # объединяем эмбеды
         message = await ctx.send(embed=emb1)
         pages = Paginator(self.Bot, message, embeds=embs, timeout=60, only=ctx.author, footer=False,
-            color=BotSettings['Bot']['BasicColor']) # выставляем настройки страниц (Документация: https://github.com/RuCybernetic/Cybernator/blob/master/README_Ru.md)
+            color=BotSettings['Bot']['BasicColor'], use_remove_reaction=False) # выставляем настройки страниц (Документация: https://github.com/RuCybernetic/Cybernator/blob/master/README_Ru.md)
         await pages.start() # запускаем страницы
 
 
