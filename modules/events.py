@@ -73,15 +73,21 @@ class Events(commands.Cog): # создаём класс модуля с ивен
 
         else:
             channel = self.Bot.get_channel(BotSettings['Bot']['ErrorsLogChannel'])
+
             emb1 = discord.Embed(title='Ошибка:', description=f'**:anger: Произошла неизвестная ошибка!**',
-                color=BotSettings['Bot']['ErrorColor'])
+                    color=BotSettings['Bot']['ErrorColor'])
             emb2 = discord.Embed(title='Ошибка:',
                 description=f'**:tent: Сервер:** {ctx.guild.name}\n'
                             f'**:bulb: Команда:** {ctx.message.content}\n'
                             f'**:anger: Ошибка:** ```py\n{error}\n```', color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb1)
-            await channel.send(embed=emb2)
-            raise error
+
+            if f'{ctx.prefix}help' in ctx.message.content:
+                await channel.send(embed=emb2)
+                raise error
+            else:
+                await ctx.send(embed=emb1)
+                await channel.send(embed=emb2)
+                raise error
 
 
     @commands.Cog.listener()
