@@ -1,4 +1,4 @@
-import discord, os
+import discord, os # импорт
 from discord.ext import commands
 from utils.config import BotSettings, GetPrefix
 
