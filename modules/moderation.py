@@ -240,14 +240,8 @@ class Moderation(commands.Cog): # создаём класс модуля ком�
     async def prefix(self, ctx, prefix = None):
         collection = BotSettings['Mongo']['Collection'].custom_prefix            
         if prefix != None: # проверка введён ли префикс
-            if len(str(prefix)) < 3: # проверка длины префикса(нельзя больше 2 символов)
-                collection.update_one({
-                    'guild_name': ctx.guild.name,
-                    'guild_id': ctx.guild.id,
-                    'guild_owner_name': f'{ctx.guild.owner.name}#{ctx.guild.owner.discriminator}',
-                    'guild_owner_id': ctx.guild.owner.id
-                    },
-                    {'$set':{'guild_prefix': prefix}})
+            if len(str(prefix)) <= 3: # проверка длины префикса(нельзя больше 3 символов)
+                collection.update_one({'guild_id': ctx.guild.id,}, {'$set': {'guild_prefix': prefix}})
 
                 emb = discord.Embed(title=f'Смена префикса:',
                     description=f'**:flashlight: Вы успешно сменили префикс на:** {prefix}',
@@ -255,7 +249,7 @@ class Moderation(commands.Cog): # создаём класс модуля ком�
                 await ctx.send(embed=emb)
             else:
                 emb = discord.Embed(title='Ошибка:',
-                    description=f'**:anger: Префикс не может быть больше 2 символов!**',
+                    description=f'**:anger: Префикс не может быть больше 3 символов!**',
                     color=BotSettings['Bot']['ErrorColor'])
                 await ctx.send(embed=emb)
         else:
