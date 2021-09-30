@@ -81,10 +81,9 @@ class Events(commands.Cog): # создаём класс модуля с ивен
                             f'**:bulb: Команда:** {ctx.message.content}\n'
                             f'**:anger: Ошибка:** ```py\n{error}\n```', color=BotSettings['Bot']['ErrorColor'])
 
-            else:
-                await ctx.send(embed=emb1)
-                await channel.send(embed=emb2)
-                raise error
+            await ctx.send(embed=emb1)
+            await channel.send(embed=emb2)
+            raise error
 
 
     @commands.Cog.listener()
