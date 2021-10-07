@@ -1,1 +1,1 @@
-# CoffeeBot (Alpha)
+# CoffeeBot
