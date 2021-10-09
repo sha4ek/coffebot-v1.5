@@ -10,8 +10,8 @@ BotSettings = {
         'ErrorColor': 0xcf080f, # цвет рамки при ошибке
         'NormalColor': 0x80d7a4, # цвет рамки при верном решении
         'OwnerID': 546502974499717122, # ID разработчика бота
-        'ErrorsLogChannel': 880968020980273173,
-        'GuildsLogChannel': 883974406446149633
+        'ErrorsLogChannel': 896215788455886849,
+        'GuildsLogChannel': 896215771347320872
     },
     'Mongo': {
         'Collection': MongoClient(os.environ.get('MongoToken')).Coffeebase
