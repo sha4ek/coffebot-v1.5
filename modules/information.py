@@ -1,113 +1,143 @@
-import discord, datetime
-from discord.ext import commands
-from utils.config import BotSettings, BotPostfix # импортируем конфиг бота
+import disnake, psutil, os, math, platform, sys
+from disnake.ext import commands
+
+from utils.config import BotSettings
+from utils.translations import DiscordStatuses, DiscordSlowmods, DiscordVerificationLevel
 
 
-class Information(commands.Cog): # создаём класс модуля информации
+OrangeColor = BotSettings['OrangeColor'] # переменная с цветом эмбеда
+
+
+class Information(commands.Cog):
     def __init__(self, Bot):
         self.Bot = Bot
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
-    async def stats(self, ctx): # создаём команду статистики
-        file = open("uptime.txt", "r") # открываем файл аптайма
-        uptime = file.read() # читаем его
-        file.close() # закрываем
+    async def stats(self, ctx):
+        size_name = ('б', 'кб', 'мб', 'гб', 'тб')
+        disnake_version = f'v{disnake.version_info[0]}.{disnake.version_info[1]}.{disnake.version_info[2]}'
+        python_version = f'v{sys.version_info[0]}.{sys.version_info[1]}.{sys.version_info[2]}'
+        platform_bit = 'x64' if '64bit' in platform.architecture(bits='') else 'x86'
 
-        emb = discord.Embed(title='Статистика бота:',
-            description=f'**:books: Всего серверов:** {len(self.Bot.guilds)}\n'
-                        f'**:busts_in_silhouette: Всего пользователей:** {len(self.Bot.users)}\n'
-                        f'**:ping_pong: Текущая задержка:** {self.Bot.ws.latency * 1000:.0f}мс\n'
-                        f'**:satellite_orbital: Время работы:** {uptime}', color=BotSettings['Bot']['BasicColor']) # создаём эмбед
+        used = psutil.Process(os.getpid()).memory_info().rss
+        i = int(math.floor(math.log(used, 1024)))
+        p = math.pow(1024, i)
+        s = round(used / p, 2)
+        used_bot = '%s%s' % (s, size_name[i])
+
+        total = psutil.virtual_memory().total
+        i = int(math.floor(math.log(total, 1024)))
+        p = math.pow(1024, i)
+        s = round(total / p, 2)
+        total_bot = '%s%s' % (s, size_name[i])
+
+        emb = disnake.Embed(
+            title='Статистика бота:',
+            description=f'> **Количество серверов:** {len(self.Bot.guilds)}\n'
+                        f'> **Количество пользователей:** {len(self.Bot.users)}\n'
+                        f'> **Количество команд:** {len(self.Bot.commands)}\n'
+                        f'> **Текущая задержка:** {self.Bot.ws.latency * 1000:.0f}мс\n'
+                        f'> **Версия бота:** {BotSettings["BotVersion"]}\n'
+                        f'> **Версия Disnake:** {disnake_version}\n'
+                        f'> **Версия Python:** {python_version}\n'
+                        f'> **Система:** {platform.system()} {platform.release()} ({platform_bit})\n'
+                        f'> **Использованно ОЗУ:** {used_bot}/{total_bot}',
+            color=OrangeColor
+        )
+
         await ctx.send(embed=emb)
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
-    async def user(self, ctx, member: discord.Member=None):
-        if member == None: user = ctx.author
-        else: user = member # проверка на участника
+    async def user(self, ctx, member: disnake.Member = None):
+        user = ctx.author if member == None else member
 
-        create_time = (datetime.datetime.today()-user.created_at).days # узнаём дату регистрации участника
-        join_time = (datetime.datetime.today()-user.joined_at).days # узнаём дату входа на сервер участника
-
-        if create_time == 0:
-            create_day = f'{user.created_at.strftime("%d.%m.%Y")} (Меньше дня назад)'
-        else:
-            create_day = f'{user.created_at.strftime("%d.%m.%Y")} ({create_time} {BotPostfix(create_time, "день", "дня", "дней")} назад)'
-
-        if join_time == 0:
-            join_day = f'{user.joined_at.strftime("%d.%m.%Y")} (Меньше дня назад)'
-        else:
-            join_day = f'{user.joined_at.strftime("%d.%m.%Y")} ({join_time} {BotPostfix(join_time, "день", "дня", "дней")} назад)'
-
-        if user.status == discord.Status.online: status = '**:green_circle: Статус:** В сети'
-        elif user.status == discord.Status.offline: status = '**:black_circle: Статус:** Не в сети'
-        elif user.status == discord.Status.idle: status = '**:orange_circle: Статус:** Неактивен'
-        elif user.status == discord.Status.dnd: status = '**:red_circle: Статус:** Не беспокоить'
-
-        activity = ''
+        activities = ''
         for i in user.activities:
-            if i.type == discord.ActivityType.custom:
-                activity += f'**:sparkles: Пользовательский статус:** {i.name}\n'
-            if i.type == discord.ActivityType.playing:
-                activity += f'**:video_game: Играет в:** {i.name}\n'
-            if i.type == discord.ActivityType.listening:
-                artists = ''
-                for j in i.artists:
-                    	artists += f'{j}'
-                activity += f'**:musical_note: Слушает:** {i.title} ({", ".join(i.artists)})\n'
+            if i.type == disnake.ActivityType.custom:
+                activities += f'> **Пользовательский статус:** {i.name}\n'
 
-        emb = discord.Embed(title=f'Информация об участнике:',
-            description=f'**:pencil: Никнейм:** {user.name}\n'
-                        f'**:id: Идентификатор:** {user.id}\n'
-                        f'**:notebook_with_decorative_cover: Создал аккаунт Discord:** {create_day}\n'
-                        f'**:door: Присоединился к серверу:** {join_day}\n'
-                        f'**:arrow_up: Наивысшая роль:** <@&{user.top_role.id}>\n'
-                        f'{status}\n'
-                        f'{activity}', color=user.color)
-        emb.set_thumbnail(url=user.avatar_url)
+            if i.type == disnake.ActivityType.playing:
+                activities += f'> **Играет в:** {i.name}\n'
+
+            if i.type == disnake.ActivityType.listening:
+                artist = ''
+                for artists in i.artists:
+                    	artist += f'{artists}'
+
+                activities += f'> **Слушает:** {i.title} ({", ".join(i.artists)})\n'
+
+        emb = disnake.Embed(
+            title='Информация об участнике:',
+            description=f'> **Никнейм:** {user.name}\n'
+                        f'> **Идентификатор:** {user.id}\n'
+                        f'> **Создал аккаунт Discord:** <t:{int(user.created_at.timestamp())}:D>\n'
+                        f'> **Присоединился к серверу:** <t:{int(user.joined_at.timestamp())}:D>\n'
+                        f'> **Наивысшая роль:** {user.top_role.mention}\n'
+                        f'> **Статус:** {DiscordStatuses[user.status]}\n'
+                        f'{activities}',
+            color=OrangeColor
+        )
+        emb.set_thumbnail(url=user.avatar)
+
+        await ctx.send(embed=emb)
+
+    
+    @commands.command()
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True)
+    async def server(self, ctx):
+        if ctx.guild.verification_level == disnake.VerificationLevel.none: verification_level = ''
+        else: verification_level = f'> **Уровень верификации:** {DiscordVerificationLevel[ctx.guild.verification_level]}\n'
+
+        emb = disnake.Embed(
+            title='Информация о сервере:',
+            description=f'> **Название:** {ctx.guild}\n'
+                        f'> **Владелец:** {ctx.guild.owner.mention}\n'
+                        f'> **Создан:** <t:{int(ctx.guild.created_at.timestamp())}:D>\n'
+                        f'{verification_level}'
+                        f'> **Количество каналов:** {len(ctx.guild.channels)}\n'
+                        f'> **Количество ролей:** {len(ctx.guild.roles)}\n'
+                        f'> **Количество участников:** {ctx.guild.member_count}\n',
+            color=OrangeColor
+        )
+        emb.set_thumbnail(url=ctx.guild.icon)
+
         await ctx.send(embed=emb)
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
-    async def channel(self, ctx, text_channel: discord.TextChannel=None):
-        if text_channel == None: channel = ctx.channel
-        else: channel = text_channel
+    async def channel(self, ctx, text_channel: disnake.TextChannel = None):
+        channel = ctx.channel if text_channel == None else text_channel
 
-        create_time = (datetime.datetime.now() - channel.created_at).days
+        if channel.slowmode_delay == 0: slowmode = ''
+        else: slowmode = f'> **Задержка:** {DiscordSlowmods[channel.slowmode_delay]}\n'
 
-        if channel.slowmode_delay == 0: slowmode=''
-        else: slowmode=f'**:sleeping_accommodation: Задержка:** {BotSettings["ChannelSlowmode"][channel.slowmode_delay]}\n'
+        if channel.category == None: category = ''
+        else: category = f'> **Категория:** {channel.category}\n'
 
-        if channel.category == None: category=''
-        else: category=f'**:beginner: Категория:** {channel.category}\n'
+        if channel.topic == None: topic = ''
+        else: topic = f'> **Описание:** {channel.topic}\n'
 
-        if channel.topic == None: topic=''
-        else: topic=f'**:page_facing_up: Описание:** {channel.topic}\n'
+        emb = disnake.Embed(
+            title='Информация о канале:',
+            description=f'> **Название:** {channel}\n'
+                        f'> **Идентификатор:** {channel.id}\n'
+                        f'{slowmode}{category}{topic}'
+                        f'> **Создан:** <t:{int(channel.created_at.timestamp())}:D>',
+            color=OrangeColor
+        )
 
-        if create_time == 0:
-            create_day = f'{channel.created_at.strftime("%d.%m.%Y")} (Меньше дня назад)'
-        else:
-            create_day = f'{channel.created_at.strftime("%d.%m.%Y")} ({create_time} {BotPostfix(create_time, "день", "дня", "дней")} назад)'
-
-        emb = discord.Embed(title='Информация о канале:',
-            description=f'**:pencil: Название:** {channel.name}\n'
-                        f'**:id: Идентификатор:** {channel.id}\n'
-                        f'{slowmode}'
-                        f'{category}'
-                        f'{topic}'
-                        f'**:notebook_with_decorative_cover: Создан:** {create_day}',
-            color=BotSettings['Bot']['BasicColor'])
         await ctx.send(embed=emb)
 
 
-
-def setup(Bot): # подключаем класс к основному файлу 
+def setup(Bot):
     Bot.add_cog(Information(Bot))
-    print(f'[MODULES] Information\'s load!') # принтуем
+    print(f'[MODULES] Module "Information" is loaded!')
