@@ -61,8 +61,7 @@ class Help(commands.Cog):
 
         emb5 = disnake.Embed(
             title='Для разработчика:',
-            description=f'> **{ctx.prefix}jishaku py <код>** - исполнение кода ботом вне редактора\n'
-                        f'> **{ctx.prefix}modules [функция] [модуль]** - управление модулями бота',
+            description=f'> **{ctx.prefix}modules [функция] [модуль]** - управление модулями бота',
             color=OrangeColor
         )
         
