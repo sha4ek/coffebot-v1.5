@@ -65,11 +65,3 @@ DiscordSlowmods = {
     7200: '2 часа',
     21600: '6 часов'
 }
-
-
-DiscordVerificationLevel = {
-    disnake.VerificationLevel.low: 'низкий',
-    disnake.VerificationLevel.medium: 'средний',
-    disnake.VerificationLevel.high: 'высокий',
-    disnake.VerificationLevel.highest: 'очень высокий'
-}
