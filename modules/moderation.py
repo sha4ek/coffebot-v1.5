@@ -1,264 +1,284 @@
-import discord
-from discord.ext import commands
-from utils.config import BotSettings, BotPostfix # импортируем конфиг бота
+import disnake
+from disnake.ext import commands
+
+from utils.config import BotSettings
+from utils.functions import BotPostfix
 
 
-class Moderation(commands.Cog): # создаём класс модуля команды помощи
+GreenColor = BotSettings['GreenColor'] # переменная с цветом эмбеда
+RedColor = BotSettings['RedColor'] # переменная с цветом эмбеда
+
+
+class Moderation(commands.Cog):
     def __init__(self, Bot):
         self.Bot = Bot
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
-    @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True,
-        manage_messages=True)
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, manage_messages=True)
     @commands.has_permissions(manage_messages=True)
-    async def clear(self, ctx, amount: int=None): # создаём команду очистки
+    async def clear(self, ctx, amount: int = None):
         if amount == None:
-            emb = discord.Embed(title='Ошибка',
-                description=f'**:anger: Вы не указали количество сообщений!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description=f'> **Вы не указали количество сообщений!**',
+                color=RedColor
+            )
+
         else:
             if amount >= 101:
-                emb = discord.Embed(title='Ошибка',
-                    description=f'**:anger: Вы не можете указать больше 100 сообщений!**',
-                    color=BotSettings['Bot']['ErrorColor'])
-                await ctx.send(embed=emb)
+                emb = disnake.Embed(
+                    title='Ошибка:',
+                    description=f'> **Вы не можете указать больше 100 сообщений!**',
+                    color=RedColor
+                )
+
             else:
-                emb = discord.Embed(title='Очистка чата:',
-                    description=f'**:broom: Из чата было удалено {amount} {BotPostfix(amount, "сообщение", "сообщения", "сообщений")}**',
-                    color=BotSettings['Bot']['NormalColor'])
+                emb = disnake.Embed(
+                    title='Очистка чата:',
+                    description=f'> **Из чата было удалено {amount} {BotPostfix(amount, "сообщение", "сообщения", "сообщений")}**',
+                    color=GreenColor
+                )
                 await ctx.channel.purge(limit=amount+1)
-                await ctx.send(embed=emb)
+        
+        await ctx.send(embed=emb)
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, manage_roles=True)
     @commands.has_permissions(manage_roles=True)
-    async def addrole(self, ctx, member: discord.Member = None, role: discord.Role = None):
+    async def addrole(self, ctx, member: disnake.Member=None, role: disnake.Role=None):
         if member == None:
-            emb = discord.Embed(title='Ошибка:', description='**:anger: Вы не указали участника!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не указали участника!**',
+                color=RedColor
+            )
 
         elif member.id == ctx.author.id:
-            emb = discord.Embed(title='Ошибка:', description='**:anger: Вы не можете указать самого себя!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете указать самого себя!**',
+                color=RedColor
+            )
 
         elif role == None:
-            emb = discord.Embed(title='Ошибка:', description='**:anger: Вы не указали роль!**',
-            color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не указали роль!**',
+                color=RedColor
+            )
 
         elif member.top_role.position >= ctx.guild.me.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете выдать роль участнику, который выше или равен боту по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете выдать роль участнику, который выше или равен боту по роли!**',
+                color=RedColor
+            )
 
         elif member.top_role.position >= ctx.author.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете выдать роль участнику, который выше или равен вам по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете выдать роль участнику, который выше или равен вам по роли!**',
+                color=RedColor
+            )
 
         elif role.position >= ctx.guild.me.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете выдать роль, которая выше или равна боту!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете выдать роль, которая выше или равна боту!**',
+                color=RedColor
+            )
 
         elif role.position >= ctx.author.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете выдать роль, которая выше или равна вам!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете выдать роль, которая выше или равна вам!**',
+                color=RedColor
+            )
             
         else:
+            emb = disnake.Embed(
+                title='Добавление роли:',
+                description=f'> **Роль "{role.name}" выдана {member.mention}**',
+                color=GreenColor
+            )
+
             await member.add_roles(role)
-            emb = discord.Embed(title='Добавление роли:',
-                description=f'**{ctx.author.name} выдал {member.name} роль "{role.name}"**',
-                color=BotSettings['Bot']['NormalColor'])
-            await ctx.send(embed=emb)
+        
+        await ctx.send(embed=emb)
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, ban_members=True)
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: discord.Member=None, *, reason=None):
+    async def ban(self, ctx, member: disnake.Member=None, *, reason=None):
         if member == None:
-            emb = discord.Embed(title='Ошибка:', description=f'**:anger: Вы не указали участника!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не указали участника!**',
+                color=RedColor
+            )
 
         elif member.id == ctx.author.id:
-            emb = discord.Embed(title='Ошибка:', description='**:anger: Вы не можете указать самого себя!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете указать самого себя!**',
+                color=RedColor
+            )
 
         elif member.top_role.position >= ctx.author.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете забанить участника, который выше или равен вам по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете забанить участника, который выше или равен вам по роли!**',
+                color=RedColor
+            )
 
         elif member.top_role.position >= ctx.guild.me.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете забанить участника, который выше или равен боту по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете забанить участника, который выше или равен боту по роли!**',
+                color=RedColor
+            )
 
         else:
             if reason == None:
-                embg = discord.Embed(title='Бан участника:', description=f'**:hammer: Участник {member} забанен на сервере**',
-                    color=BotSettings['Bot']['NormalColor'])
-                embdm = discord.Embed(title='Бан участника:',
-                    description=f'**:hammer: Вы забанены на сервере {ctx.guild.name} модератором {ctx.author}**',
-                    color=BotSettings['Bot']['NormalColor'])
-                await ctx.send(embed=embg)
-                await ctx.send(embed=embdm)
+                emb = disnake.Embed(
+                    title='Бан участника:',
+                    description=f'> **Участник {member} забанен на сервере**',
+                    color=GreenColor
+                )
+
+                embdm = disnake.Embed(
+                    title='Бан участника:',
+                    description=f'> **Вы забанены на сервере {ctx.guild.name} модератором {ctx.author}**',
+                    color=GreenColor
+                )
+
+                await member.send(embed=embdm)
                 await ctx.guild.ban(member)
                 
             else:
-                embg = discord.Embed(title='Бан участника:',
-                    description=f'**:hammer: Участник {member} забанен на сервере по причине "{reason}"**',
-                    color=BotSettings['Bot']['NormalColor'])
-                embdm = discord.Embed(title='Бан участника:',
-                    description=f'**:hammer: Вы забанены на сервере {ctx.guild.name} модератором {ctx.author} по причине "{reason}"**',
-                    color=BotSettings['Bot']['NormalColor'])
-                await ctx.send(embed=embg)
-                await ctx.send(embed=embdm)
+                emb = disnake.Embed(
+                    title='Бан участника:',
+                    description=f'> **Участник {member} забанен на сервере по причине "{reason}"**',
+                    color=GreenColor
+                )
+
+                embdm = disnake.Embed(
+                    title='Бан участника:',
+                    description=f'> **Вы забанены на сервере {ctx.guild.name} модератором {ctx.author} по причине "{reason}"**',
+                    color=GreenColor
+                )
+
+                await member.send(embed=embdm)
                 await ctx.guild.ban(member, reason=reason)
 
+        await ctx.send(embed=emb)
+
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
-    @commands.bot_has_permissions(send_messages=True, embed_links=True, manage_roles=True)
-    @commands.has_permissions(manage_roles=True)
-    async def mute(self, ctx, member: discord.Member=None):
-        role = discord.utils.get(ctx.guild.roles, name='Muted')
-
+    @commands.cooldown(rate=1, per=2.0, type=commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True, kick_members=True)
+    @commands.has_permissions(kick_members=True)
+    async def kick(self, ctx, member: disnake.Member=None, *, reason=None):
         if member == None:
-            emb = discord.Embed(title='Ошибка:', description=f'**:anger: Вы не указали участника!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не указали участника!**',
+                color=RedColor
+            )
 
         elif member.id == ctx.author.id:
-            emb = discord.Embed(title='Ошибка:', description='**:anger: Вы не можете указать самого себя!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете указать самого себя!**',
+                color=RedColor
+            )
 
         elif member.top_role.position >= ctx.author.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете замьютить участника, который выше или равен вам по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете кикнуть участника, который выше или равен вам по роли!**',
+                color=RedColor
+            )
 
         elif member.top_role.position >= ctx.guild.me.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете замьютить участника, который выше или равен боту по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
-
-        elif role in member.roles:
-            emb = discord.Embed(title='Ошибка:',
-                description=f'**:anger: Участник {member} уже замьючен на сервере!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
-
-        elif role == None:
-            emb = discord.Embed(title='Роль мьюта:', description=f'**:mute: Роль мьюта создана, используйте команду снова**',
-                    color=BotSettings['Bot']['NormalColor'])
-            await ctx.guild.create_role(name='Muted', color=0x696969, reason='Роль мута')
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете кикнуть участника, который выше или равен боту по роли!**',
+                color=RedColor
+            )
 
         else:
-            embg = discord.Embed(title='Мьют участника:', description=f'**:mute: Участник {member} замьючен на сервере**',
-                    color=BotSettings['Bot']['NormalColor'])
-            embdm = discord.Embed(title='Мьют участника:',
-                description=f'**:mute: Вы замьючены на сервере {ctx.guild.name} модератором {ctx.author}**',
-                color=BotSettings['Bot']['NormalColor'])
-            await ctx.send(embed=embg)
-            await member.send(embed=embdm)
-            await member.add_roles(role, reason='Мьют')
+            if reason == None:
+                emb = disnake.Embed(
+                    title='Кик участника:',
+                    description=f'> **Участник {member} кикнут с сервера**',
+                    color=GreenColor
+                )
 
+                embdm = disnake.Embed(
+                    title='Кик участника:',
+                    description=f'> **Вы кикнуты с сервера {ctx.guild.name} модератором {ctx.author}**',
+                    color=GreenColor
+                )
 
-    @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
-    @commands.bot_has_permissions(send_messages=True, embed_links=True, manage_roles=True)
-    @commands.has_permissions(manage_roles=True)
-    async def unmute(self, ctx, member: discord.Member=None):
-        role = discord.utils.get(ctx.guild.roles, name='Muted')
-
-        if member == None:
-            emb = discord.Embed(title='Ошибка:', description=f'**:anger: Вы не указали участника!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
-
-        elif member.id == ctx.author.id:
-            emb = discord.Embed(title='Ошибка:', description='**:anger: Вы не можете указать самого себя!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
-
-        elif member.top_role.position >= ctx.author.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете размьютить участника, который выше или равен вам по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
-
-        elif member.top_role.position >= ctx.guild.me.top_role.position:
-            emb = discord.Embed(title='Ошибка:',
-                description='**:anger: Вы не можете размьютить участника, который выше или равен боту по роли!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
-
-        elif not role in member.roles:
-            emb = discord.Embed(title='Ошибка:',
-                description=f'**:anger: Участник {member} ещё не замьючен на сервере!**',
-                color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
-
-        else:
-            embg = discord.Embed(title='Размьют участника:', description=f'**:sound: Участник {member} размьючен на сервере**',
-                    color=BotSettings['Bot']['NormalColor'])
-            embdm = discord.Embed(title='Размьют участника:',
-                description=f'**:sound: Вы размьючены на сервере {ctx.guild.name} модератором {ctx.author}**',
-                color=BotSettings['Bot']['NormalColor'])
-            await ctx.send(embed=embg)
-            await member.send(embed=embdm)
-            await member.remove_roles(role, reason='Размьют')
-
-
-    @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
-    @commands.bot_has_permissions(send_messages=True, embed_links=True)
-    @commands.has_permissions(manage_guild=True) 
-    async def prefix(self, ctx, prefix = None):
-        collection = BotSettings['Mongo']['Collection'].custom_prefix            
-        if prefix != None: # проверка введён ли префикс
-            if len(str(prefix)) <= 3: # проверка длины префикса(нельзя больше 3 символов)
-                collection.update_one({'guild_id': ctx.guild.id,}, {'$set': {'guild_prefix': prefix}})
-
-                emb = discord.Embed(title=f'Смена префикса:',
-                    description=f'**:flashlight: Вы успешно сменили префикс на:** {prefix}',
-                    color=BotSettings['Bot']['NormalColor'])
-                await ctx.send(embed=emb)
+                await member.send(embed=embdm)
+                await ctx.guild.ban(member)
+                
             else:
-                emb = discord.Embed(title='Ошибка:',
-                    description=f'**:anger: Префикс не может быть больше 3 символов!**',
-                    color=BotSettings['Bot']['ErrorColor'])
-                await ctx.send(embed=emb)
+                emb = disnake.Embed(
+                    title='Кик участника:',
+                    description=f'> **Участник {member} кикнут с сервера по причине "{reason}"**',
+                    color=GreenColor
+                )
+
+                embdm = disnake.Embed(
+                    title='Кик участника:',
+                    description=f'> **Вы кикнуты с сервера {ctx.guild.name} модератором {ctx.author} по причине "{reason}"**',
+                    color=GreenColor
+                )
+                
+                await member.send(embed=embdm)
+                await ctx.guild.ban(member, reason=reason)
+
+        await ctx.send(embed=emb)
+
+
+    @commands.command()
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True, ban_members=True)
+    @commands.has_permissions(ban_members=True)
+    async def unban(self, ctx, member: disnake.User = None):
+        if member == None:
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не указали участника!**',
+                color=RedColor
+            )
+
+        elif member.id == ctx.author.id:
+            emb = disnake.Embed(
+                title='Ошибка:',
+                description='> **Вы не можете указать сами себя!**',
+                color=RedColor
+            )
+            
         else:
-            emb = discord.Embed(title='Ошибка:',
-                    description=f'**:anger: Вы не указали префикс!**',
-                    color=BotSettings['Bot']['ErrorColor'])
-            await ctx.send(embed=emb)
+            emb = disnake.Embed(
+                title='Разбан участника:',
+                description=f'> **Участник {member} был разбанен на сервере модератором {ctx.author.mention}**',
+                color=GreenColor
+            )
+            await ctx.guild.unban(member)
+        
+        await ctx.send(embed=emb)
 
 
-def setup(Bot):  # подключаем класс к основному файлу 
+def setup(Bot):
     Bot.add_cog(Moderation(Bot))
-    print(f'[MODULES] Moderation\'s load!') # принтуем
+    print(f'[MODULES] Module "Moderation" is loaded!')
