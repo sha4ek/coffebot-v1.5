@@ -1,50 +1,83 @@
-import discord
-from discord.ext import commands
-from Cybernator import Paginator # импортируем подмодуль для страниц (pip install Cybernator)
-from utils.config import BotSettings # импортируем конфиг бота
+import disnake
+from disnake.ext import commands
+from CoffeePaginator import Paginator
+
+from utils.config import BotSettings
 
 
-class Help(commands.Cog): # создаём класс модуля команды помощи
+OrangeColor = BotSettings['OrangeColor'] # переменная с цветом эмбеда
+
+
+class Help(commands.Cog):
     def __init__(self, Bot):
         self.Bot = Bot
 
 
     @commands.command()
-    @commands.cooldown(rate=1, per=4.0, type=commands.BucketType.user)
-    @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True,
-        add_reactions=True)
-    async def help(self, ctx): # создаём команду помощи
-        emb1 = discord.Embed(title='Информационные команды:',
-            description=f'**:chart_with_upwards_trend: {ctx.prefix}stats** - немного статистики бота\n'
-                        f'**:scroll: {ctx.prefix}user [участник]** - информация об участнике\n'
-                        f'**:page_facing_up: {ctx.prefix}channel [канал]** - информация о канале\n',
-            color=BotSettings['Bot']['BasicColor'])
-        emb2 = discord.Embed(title='Фановые команды:',
-            description=f'**:video_game: {ctx.prefix}activity [ytt/chess/poker]** - активности в голосовом канале\n'
-                        f'**:cat: {ctx.prefix}cat** - картинки котиков') # делаем эмбеды
-        emb3 = discord.Embed(title='Модерационые команды:',
-            description=f'**:broom: {ctx.prefix}clear <кол-во>** - очистка чата\n'
-                        f'**:heavy_plus_sign: {ctx.prefix}addrole <участник> <роль>** - добавление роли участнику\n'
-                        f'**:hammer: {ctx.prefix}ban <участник> [причина]** - бан участника\n'
-                        f'**:mute: {ctx.prefix}mute <участник>** - мьют участника\n'
-                        f'**:sound: {ctx.prefix}unmute <участник>** - размьют участника\n'
-                        f'**:flashlight: {ctx.prefix}prefix <префикс>** - установка префикса для сервера\n')
-        emb4 = discord.Embed(title='Музыкальные команды:',
-            description=f'**:notes: {ctx.prefix}lyrics <песня>** - поиск текста песни\n')
-        emb5 = discord.Embed(title='Команды разработчика:',
-            description=f'**:grey_exclamation: {ctx.prefix}modules [load/unload/reload]** - управление модулями бота\n'
-                        f'**:gear: {ctx.prefix}jsk <функция> <код>** - исполнение кода ботом вне редактора')
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True)
+    async def help(self, ctx):
+        emb = disnake.Embed(
+            title='Общее:',
+            description=f'> **{ctx.prefix}avatar [участник]** - аватарка учасника\n'
+                        f'> **{ctx.prefix}links** - полезные ссылки',
+            color=OrangeColor
+        )
+
+        emb1 = disnake.Embed(
+            title='Весёлое:',
+            description=f'> **{ctx.prefix}activity [функция]** - активности в голосовом канале\n'
+                        f'> **{ctx.prefix}kiss <участник>** - реакция "Поцеловать"\n'
+                        f'> **{ctx.prefix}hug <участник>** - реакция "Обнять"\n'
+                        f'> **{ctx.prefix}slap <участник>** - реакция "Пощёчина"\n'
+                        f'> **{ctx.prefix}pat <участник>** - реакция "Погладить"\n',
+            color=OrangeColor
+        )
+
+        emb2 = disnake.Embed(
+            title='Информация:',
+            description=f'> **{ctx.prefix}stats** - немного статистики бота\n'
+                        f'> **{ctx.prefix}user [участник]** - информация об участнике\n'
+                        f'> **{ctx.prefix}server** - информация о сервере\n'
+                        f'> **{ctx.prefix}channel [канал]** - информация о канале',
+            color=OrangeColor
+        )
+
+        emb3 = disnake.Embed(
+            title='Модерация:',
+            description=f'> **{ctx.prefix}clear <количество сообщений>** - очистка чата\n'
+                        f'> **{ctx.prefix}addrole <участник> <роль>** - добавление роли участнику\n'
+                        f'> **{ctx.prefix}ban <участник> [причина]** - бан участника\n'
+                        f'> **{ctx.prefix}kick <участник> [причина]** - кик участника\n'
+                        f'> **{ctx.prefix}unban <участник>** - разбан участника',
+            color=OrangeColor
+        )
+
+        emb4 = disnake.Embed(
+            title='Настройки:',
+            description=f'> **{ctx.prefix}prefix <префикс>** - установка префикса для сервера',
+            color=OrangeColor
+        )
+
+        emb5 = disnake.Embed(
+            title='Для разработчика:',
+            description=f'> **{ctx.prefix}jishaku py <код>** - исполнение кода ботом вне редактора\n'
+                        f'> **{ctx.prefix}modules [функция] [модуль]** - управление модулями бота',
+            color=OrangeColor
+        )
         
-        if ctx.author.id == BotSettings['Bot']['OwnerID']: # проверка на создателя бота
-            embs = [emb1, emb2, emb3, emb4, emb5] # объединяем эмбеды
+        embs = [emb, emb1, emb2, emb3, emb4]
+        message = await ctx.send(embed=emb)
+        
+        if ctx.author.id != self.Bot.owner_id:
+            embs = embs
         else:
-            embs = [emb1, emb2, emb3, emb4] # объединяем эмбеды
-        message = await ctx.send(embed=emb1)
-        pages = Paginator(self.Bot, message, embeds=embs, timeout=60, only=ctx.author, footer=False,
-            color=BotSettings['Bot']['BasicColor'], use_remove_reaction=False) # выставляем настройки страниц (Документация: https://github.com/RuCybernetic/Cybernator/blob/master/README_Ru.md)
-        await pages.start() # запускаем страницы
+            embs.append(emb5)
+        
+        pages = Paginator(message, embs, ctx.author, True, 60)
+        await pages.start()
 
 
-def setup(Bot):  # подключаем класс к основному файлу 
+def setup(Bot):
     Bot.add_cog(Help(Bot))
-    print(f'[MODULES] Help\'s load!') # принтуем
+    print(f'[MODULES] Module "Help" is loaded!')
