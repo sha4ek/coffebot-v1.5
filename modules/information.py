@@ -2,7 +2,7 @@ import disnake, psutil, os, math, platform, sys
 from disnake.ext import commands
 
 from utils.config import BotSettings
-from utils.translations import DiscordStatuses, DiscordSlowmods, DiscordVerificationLevel
+from utils.translations import DiscordStatuses, DiscordSlowmods
 
 
 OrangeColor = BotSettings['OrangeColor'] # переменная с цветом эмбеда
@@ -92,15 +92,12 @@ class Information(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def server(self, ctx):
-        if ctx.guild.verification_level == disnake.VerificationLevel.none: verification_level = ''
-        else: verification_level = f'> **Уровень верификации:** {DiscordVerificationLevel[ctx.guild.verification_level]}\n'
 
         emb = disnake.Embed(
             title='Информация о сервере:',
             description=f'> **Название:** {ctx.guild}\n'
                         f'> **Владелец:** {ctx.guild.owner.mention}\n'
                         f'> **Создан:** <t:{int(ctx.guild.created_at.timestamp())}:D>\n'
-                        f'{verification_level}'
                         f'> **Количество каналов:** {len(ctx.guild.channels)}\n'
                         f'> **Количество ролей:** {len(ctx.guild.roles)}\n'
                         f'> **Количество участников:** {ctx.guild.member_count}\n',
