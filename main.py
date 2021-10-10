@@ -13,7 +13,6 @@ GreenColor = BotSettings['GreenColor'] # переменная с цветом э
 
 Bot = commands.Bot(command_prefix=BotPrefix, intents=disnake.Intents.all(), case_insensitive=True)
 Bot.remove_command('help')
-Bot.load_extension('jishaku')
 
 
 for file in os.listdir('./modules'):
