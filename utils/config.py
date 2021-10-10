@@ -4,7 +4,7 @@ from pymongo import MongoClient
 
 MongoSettings = {
     # База данных серверов
-    'GuildsData': MongoClient(f'mongodb+srv://{os.environ.get("MongoKey")}/TestCoffeebase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE').Coffeebase.guilds_data
+    'GuildsData': MongoClient(f'mongodb+srv://{os.environ.get("MongoKey")}/Coffeebase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE').Coffeebase.guilds_data
 }
 
 
