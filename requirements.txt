@@ -5,6 +5,3 @@ requests
 nekos.py
 CoffeePaginator
 psutil
-discord.py
-
-git+git://github.com/Gorialis/jishaku@4027c12#egg=jishaku
