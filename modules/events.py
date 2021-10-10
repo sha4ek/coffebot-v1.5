@@ -20,15 +20,6 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        developer = self.Bot.get_user(self.Bot.owner_id)
-
-        emb = disnake.Embed(
-            title='Подключение бота:',
-            description=f'> **{self.Bot.user.name} успешно подключен!**',
-            color=GreenColor
-        )
-
-        await developer.send(embed=emb)
         print(f'[SYSTEM] {self.Bot.user.name} is connected!')
 
         presences = [
