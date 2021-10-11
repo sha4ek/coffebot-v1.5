@@ -22,14 +22,18 @@ class Events(commands.Cog):
     async def on_ready(self):
         print(f'[SYSTEM] {self.Bot.user.name} is connected!')
 
-        presences = [
-            f'{len(self.Bot.guilds)} {BotPostfix(len(self.Bot.guilds), "сервер", "сервера", "серверов")}',
-            f'{len(self.Bot.users)} {BotPostfix(len(self.Bot.users), "пользователь", "пользователя", "пользователей")}'
-            ]
         while True:
             await self.Bot.change_presence(
                 activity=disnake.Activity(
-                    name=f'{MainPrefix}help | {presences[random.randint(0, 1)]}',
+                    name=f'{MainPrefix}help | {len(self.Bot.guilds)} {BotPostfix(len(self.Bot.guilds), "сервер", "сервера", "серверов")}',
+                    type=disnake.ActivityType.watching
+                ),
+                status=disnake.Status.idle
+            )
+            await asyncio.sleep(6)
+            await self.Bot.change_presence(
+                activity=disnake.Activity(
+                    name=f'{MainPrefix}help | {len(self.Bot.users)} {BotPostfix(len(self.Bot.users), "пользователь", "пользователя", "пользователей")}',
                     type=disnake.ActivityType.watching
                 ),
                 status=disnake.Status.idle
