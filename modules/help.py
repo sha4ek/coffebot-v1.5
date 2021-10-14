@@ -68,7 +68,7 @@ class Help(commands.Cog):
         embs = [emb, emb1, emb2, emb3, emb4]
         message = await ctx.send(embed=emb)
         
-        if ctx.author.id != self.Bot.owner_id:
+        if ctx.author.id != 546502974499717122:
             embs = embs
         else:
             embs.append(emb5)
