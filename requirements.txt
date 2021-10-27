@@ -1,6 +1,6 @@
 pymongo
 dnspython
-disnake
+disnake==2.1.5
 requests
 nekos.py
 CoffeePaginator
