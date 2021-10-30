@@ -11,7 +11,7 @@ RedColor = BotSettings['RedColor'] # переменная с цветом эмб
 GreenColor = BotSettings['GreenColor'] # переменная с цветом эмбеда
 
 
-Bot = commands.Bot(command_prefix=BotPrefix, intents=disnake.Intents.all(), case_insensitive=True)
+Bot = commands.Bot(command_prefix=BotPrefix, intents=disnake.Intents.all(), case_insensitive=True, member_cache_flags=None)
 Bot.remove_command('help')
 
 
