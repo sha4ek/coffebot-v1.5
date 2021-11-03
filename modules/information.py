@@ -104,6 +104,9 @@ class Information(commands.Cog):
             color=OrangeColor
         )
         emb.set_thumbnail(url=ctx.guild.icon)
+        
+        if ctx.guild.banner:
+            emb.set_image(url=ctx.guild.banner)
 
         await ctx.send(embed=emb)
 
