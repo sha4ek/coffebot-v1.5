@@ -1,8 +1,8 @@
+disnake
 pymongo
 dnspython
-disnake
+aeval
 requests
 nekos.py
 CoffeePaginator
 psutil
-aeval
