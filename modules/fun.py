@@ -1,32 +1,26 @@
-import disnake, requests, json, nekos
+import disnake as discord
+import requests
+import json
+import nekos
 from disnake.ext import commands
-
-from utils.config import BotSettings
-
-
-HeaderAuthorization = {'Authorization': f'Bot {BotSettings["Token"]}', 'Content-Type': 'application/json'} # переменная с хеадером
-GreenColor = BotSettings['GreenColor'] # переменная с цветом эмбеда
-RedColor = BotSettings['RedColor'] # переменная с цветом эмбеда
-OrangeColor = BotSettings['OrangeColor'] # переменная с цветом эмбеда
+from utils.config import BotConfig
+from utils.functions import BotPrefix
 
 
 class Fun(commands.Cog):
-    def __init__(self, Bot):
-        self.Bot = Bot
+    def __init__(self, bot):
+        self.bot = bot
 
 
     @commands.group(case_insensitive=True, invoke_without_command=True)
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def activity(self, ctx):
-        emb = disnake.Embed(
-            title='Помощь по команде:',
-            description=f'> **{ctx.prefix}activity youtube** - совместный просмотр YouTube в голосовом канале\n'
-                        f'> **{ctx.prefix}activity chess** - шахматы в голосовом канале\n'
-                        f'> **{ctx.prefix}activity poker** - покер в голосовом канале',
-            color=OrangeColor
-        )
-
+        emb = discord.Embed(title='Помощь по команде:',
+            description=f'> **{BotPrefix(self.bot, ctx.message)[2]}activity youtube** - YouTube в голосовом канале\n'
+                        f'> **{BotPrefix(self.bot, ctx.message)[2]}activity chess** - шахматы в голосовом канале\n'
+                        f'> **{BotPrefix(self.bot, ctx.message)[2]}activity poker** - покер в голосовом канале',
+            color=BotConfig['OrangeColor'])
         await ctx.send(embed=emb)
 
 
@@ -34,7 +28,7 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def youtube(self, ctx):
-        if ctx.author.voice != None:
+        if ctx.author.voice:
             data = {
                 'max_age': 3600,
                 'max_uses': 0,
@@ -43,27 +37,22 @@ class Fun(commands.Cog):
                 'temporary': False,
                 'validate': None
             }
-
-            response = requests.post(
-                f'https://discord.com/api/v8/channels/{ctx.author.voice.channel.id}/invites',
+            response = requests.post(f'https://discord.com/api/v8/channels/{ctx.author.voice.channel.id}/invites',
                 data=json.dumps(data),
-                headers=HeaderAuthorization
-            )
-
+                headers={
+                    'Authorization': f'Bot {BotConfig["Token"]}',
+                    'Content-Type': 'application/json'
+                })
             link = json.loads(response.content)
             
-            emb = disnake.Embed(
-                title='YouTube Together:',
+            emb = discord.Embed(title='YouTube Together:',
                 description=f'> **[Подключиться к просмотру](https://discord.gg/{link["code"]})**',
-                color=OrangeColor
-            )
+                color=BotConfig['OrangeColor'])
         
         else:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
         
         await ctx.send(embed=emb)
 
@@ -72,7 +61,7 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def chess(self, ctx):
-        if ctx.author.voice != None:
+        if ctx.author.voice:
             data = {
                 'max_age': 3600,
                 'max_uses': 0,
@@ -81,27 +70,22 @@ class Fun(commands.Cog):
                 'temporary': False,
                 'validate': None
             }
-
-            response = requests.post(
-                f'https://discord.com/api/v8/channels/{ctx.author.voice.channel.id}/invites',
+            response = requests.post(f'https://discord.com/api/v8/channels/{ctx.author.voice.channel.id}/invites',
                 data=json.dumps(data),
-                headers=HeaderAuthorization
-            )
-
+                headers={
+                    'Authorization': f'Bot {BotConfig["Token"]}',
+                    'Content-Type': 'application/json'
+                })
             link = json.loads(response.content)
             
-            emb = disnake.Embed(
-                title='Chess In The Park:',
+            emb = discord.Embed(title='Chess In The Park:',
                 description=f'> **[Подключиться к игре](https://discord.gg/{link["code"]})**',
-                color=OrangeColor
-            )
+                color=BotConfig['OrangeColor'])
         
         else:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
         
         await ctx.send(embed=emb)
 
@@ -110,7 +94,7 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def poker(self, ctx):
-        if ctx.author.voice != None:
+        if ctx.author.voice:
             data = {
                 'max_age': 3600,
                 'max_uses': 0,
@@ -119,139 +103,118 @@ class Fun(commands.Cog):
                 'temporary': False,
                 'validate': None
             }
-
-            response = requests.post(
-                f'https://discord.com/api/v8/channels/{ctx.author.voice.channel.id}/invites',
+            response = requests.post(f'https://discord.com/api/v8/channels/{ctx.author.voice.channel.id}/invites',
                 data=json.dumps(data),
-                headers=HeaderAuthorization
-            )
-
+                headers={
+                    'Authorization': f'Bot {BotConfig["Token"]}',
+                    'Content-Type': 'application/json'
+                })
             link = json.loads(response.content)
             
-            emb = disnake.Embed(
-                title='Poker Night:',
+            emb = discord.Embed(title='Poker Night:',
                 description=f'> **[Подключиться к игре](https://discord.gg/{link["code"]})**',
-                color=OrangeColor
-            )
+                color=BotConfig['OrangeColor'])
         
         else:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
         
         await ctx.send(embed=emb)
 
 
     @commands.command()
-    async def kiss(self, ctx, member: disnake.Member = None):
-        if member == None:
-            emb = disnake.Embed(
-                title='Ошибка:',
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True)
+    async def kiss(self, ctx, member: discord.Member=None):
+        if not member:
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         elif member == ctx.message.author:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не можете поцеловать самого себя!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         else:
-            emb = disnake.Embed(
-                title='Реакция "Поцелуй":',
-                description=f'> **{ctx.message.author.mention} поцеловал {member.mention}**',
-                color=OrangeColor
-            )
+            emb = discord.Embed(title='Реакция "Поцелуй":',
+                description=f'> **{ctx.message.author.mention} поцеловал {member.mention}!**',
+                color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('kiss'))
         
         await ctx.send(embed=emb)
 
 
     @commands.command()
-    async def hug(self, ctx, member: disnake.Member = None):
-        if member == None:
-            emb = disnake.Embed(
-                title='Ошибка:',
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True)
+    async def hug(self, ctx, member: discord.Member=None):
+        if not member:
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         elif member == ctx.message.author:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не можете обнять самого себя!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         else:
-            emb = disnake.Embed(
-                title='Реакция "Обнимашки":',
-                description=f'> **{ctx.message.author.mention} обнял {member.mention}**',
-                color=OrangeColor
-            )
+            emb = discord.Embed(title='Реакция "Обнимашки":',
+                description=f'> **{ctx.message.author.mention} обнял {member.mention}!**',
+                color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('hug'))
         
         await ctx.send(embed=emb)
 
 
     @commands.command()
-    async def slap(self, ctx, member: disnake.Member = None):
-        if member == None:
-            emb = disnake.Embed(
-                title='Ошибка:',
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True)
+    async def slap(self, ctx, member: discord.Member=None):
+        if not member:
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         elif member == ctx.message.author:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не можете дать пощёчину самому себе!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         else:
-            emb = disnake.Embed(
-                title='Реакция "Пощёчина":',
-                description=f'> **{ctx.message.author.mention} дал пощёчину {member.mention}**',
-                color=OrangeColor
-            )
+            emb = discord.Embed(title='Реакция "Пощёчина":',
+                description=f'> **{ctx.message.author.mention} дал пощёчину {member.mention}!**',
+                color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('slap'))
         
         await ctx.send(embed=emb)
 
 
     @commands.command()
-    async def pat(self, ctx, member: disnake.Member = None):
-        if member == None:
-            emb = disnake.Embed(
-                title='Ошибка:',
+    @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.bot_has_permissions(send_messages=True, embed_links=True)
+    async def pat(self, ctx, member: discord.Member=None):
+        if not member:
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         elif member == ctx.message.author:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не можете погладить самого себя!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         else:
-            emb = disnake.Embed(
-                title='Реакция "Погладить":',
-                description=f'> **{ctx.message.author.mention} погладил {member.mention}**',
-                color=OrangeColor
-            )
+            emb = discord.Embed(title='Реакция "Погладить":',
+                description=f'> **{ctx.message.author.mention} погладил {member.mention}!**',
+                color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('pat'))
         
         await ctx.send(embed=emb)
 
 
-def setup(Bot):
-    Bot.add_cog(Fun(Bot))
-    print(f'[MODULES] Module "Fun" is loaded!')
+def setup(bot):
+    bot.add_cog(Fun(bot))
+    print(f'[SYSTEM] Module "fun" loaded!')
