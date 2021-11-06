@@ -4,7 +4,7 @@ from pymongo import MongoClient
 
 MongoConfig = {
     # База данных серверов
-    'GuildsData': MongoClient(f'mongodb+srv://{os.environ.get('MongoKey')}.mongodb.net/UrarakaBase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE').UrarakaBase.guildsdata,
+    'GuildsData': MongoClient(f'mongodb+srv://{os.environ.get('MongoKey')}.mongodb.net/CoffeeBase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE').CoffeeBase.guildsdata,
 }
 
 
