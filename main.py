@@ -1,38 +1,36 @@
-import disnake, os
+import disnake as discord
+import os
 from disnake.ext import commands
-
 from utils.functions import BotPrefix
-from utils.config import BotSettings
+from utils.config import BotConfig
 
+BotIntents = discord.Intents.default()
+BotIntents.members = True
+BotIntents.presences = True
 
-Token = BotSettings['Token'] # переменная с токеном бота
-OrangeColor = BotSettings['OrangeColor'] # переменная с цветом эмбеда
-RedColor = BotSettings['RedColor'] # переменная с цветом эмбеда
-GreenColor = BotSettings['GreenColor'] # переменная с цветом эмбеда
-
-
-Bot = commands.Bot(command_prefix=BotPrefix, intents=disnake.Intents.all(), case_insensitive=True, member_cache_flags=None)
-Bot.remove_command('help')
+bot = commands.Bot(command_prefix=BotPrefix, intents=BotIntents, case_insensitive=True)
+bot.remove_command('help')
 
 
 for file in os.listdir('./modules'):
     if file.endswith('.py'):
-        Bot.load_extension(f'modules.{file[:-3]}')
+        try:
+            bot.load_extension(f'modules.{file[:-3]}')
+        except Exception as exception:
+            print(f'[ERROR] Module "{file[:-3]}" wasn\'t loaded! {exception.original}')
 
 
-@Bot.group(case_insensitive=True, invoke_without_command=True)
+@bot.group(case_insensitive=True, invoke_without_command=True)
 @commands.cooldown(1, 2.0, commands.BucketType.user)
 @commands.bot_has_permissions(send_messages=True, embed_links=True)
 @commands.is_owner()
 async def modules(ctx):
-    emb = disnake.Embed(
-        title=f'Помощь по команде:',
-        description=f'> **{ctx.prefix}modules load <модуль>** - подключить модуль\n'
-                    f'> **{ctx.prefix}modules unload <модуль>** - отключить модуль\n'
-                    f'> **{ctx.prefix}modules reload <модуль>** - перезагрузить модуль\n'
-                    f'> **{ctx.prefix}modules info** - информация о модулях бота\n',
-        color=OrangeColor
-        )
+    emb = discord.Embed(title=f'Помощь по команде:',
+        description=f'> **{BotPrefix(bot, ctx.message)[2]}modules load <модуль>** - подключить модуль\n'
+                    f'> **{BotPrefix(bot, ctx.message)[2]}modules unload <модуль>** - отключить модуль\n'
+                    f'> **{BotPrefix(bot, ctx.message)[2]}modules reload <модуль>** - переподключить модуль\n'
+                    f'> **{BotPrefix(bot, ctx.message)[2]}modules info** - информация о модулях бота',
+        color=BotConfig['OrangeColor'])
     await ctx.send(embed=emb)
 
 
@@ -40,37 +38,35 @@ async def modules(ctx):
 @commands.cooldown(1, 2.0, commands.BucketType.user)
 @commands.bot_has_permissions(send_messages=True, embed_links=True)
 @commands.is_owner()
-async def load(ctx, module = None):
-    if module == None:
-        emb = disnake.Embed(
-            title='Ошибка:',
+async def load(ctx, module=None):
+    if not module:
+        emb = discord.Embed(title='Ошибка:',
             description='> **Вы не указали модуль для подключения!**',
-            color=RedColor
-            )
+            color=BotConfig['RedColor'])
 
     else:
         try:
-            Bot.load_extension(f'modules.{module}')
+            bot.load_extension(f'modules.{module}')
 
-            emb = disnake.Embed(
-                title='Подключение модуля:',
+            emb = discord.Embed(title='Подключение модуля:',
                 description=f'> **Модуль "{module}" успешно подключен!**',
-                color=GreenColor
-            )
+                color=BotConfig['GreenColor'])
 
         except commands.ExtensionNotFound:
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы указали несуществующий модуль!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
         except commands.ExtensionAlreadyLoaded:
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description='> **Указанный модуль уже подключен!**',
-                color=RedColor
-            )
+            emb = discord.Embed(title='Ошибка:',
+                description='> **Вы указали уже подключенный модуль!**',
+                color=BotConfig['RedColor'])
+
+        except commands.ExtensionFailed as ExtensionFailed:
+            emb = discord.Embed(title='Ошибка:',
+                description='> **Произошла ошибка при загрузке модуля!**\n'
+                            f'```py\n{ExtensionFailed.original}\n```',
+                color=BotConfig['RedColor'])
 
     await ctx.send(embed=emb)
 
@@ -79,37 +75,24 @@ async def load(ctx, module = None):
 @commands.cooldown(1, 2.0, commands.BucketType.user)
 @commands.bot_has_permissions(send_messages=True, embed_links=True)
 @commands.is_owner()
-async def unload(ctx, module = None):
-    if module == None:
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description='> **Вы не указали модуль для отключения!**',
-                color=RedColor
-            )
+async def unload(ctx, module=None):
+    if not module:
+        emb = discord.Embed(title='Ошибка:',
+            description='> **Вы не указали модуль для отключения!**',
+            color=BotConfig['RedColor'])
     
     else:
         try:
-            Bot.unload_extension(f'modules.{module}')
+            bot.unload_extension(f'modules.{module}')
 
-            emb = disnake.Embed(
-                title='Отключение модуля:',
+            emb = discord.Embed(title='Отключение модуля:',
                 description=f'> **Модуль "{module}" успешно отключен!**',
-                color=GreenColor
-            )
-
-        except commands.ExtensionNotFound:
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description='> **Вы указали несуществующий модуль!**',
-                color=RedColor
-            )
+                color=BotConfig['GreenColor'])
 
         except commands.ExtensionNotLoaded:
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description='> **Указанный модуль уже отключен!**',
-                color=RedColor
-            )
+            emb = discord.Embed(title='Ошибка:',
+                description='> **Вы указали несуществующий или уже отключенный модуль!**',
+                color=BotConfig['RedColor'])
 
     await ctx.send(embed=emb)
 
@@ -118,30 +101,24 @@ async def unload(ctx, module = None):
 @commands.cooldown(1, 2.0, commands.BucketType.user)
 @commands.bot_has_permissions(send_messages=True, embed_links=True)
 @commands.is_owner()
-async def reload(ctx, module = None):
-    if module == None:
-            emb = disnake.Embed(
-                title='Ошибка:',
+async def reload(ctx, module=None):
+    if not module:
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали модуль для переподключения!**',
-                color=RedColor
-            )
+                color=BotConfig['RedColor'])
 
     else:
         try:
-            Bot.reload_extension(f'modules.{module}')
+            bot.reload_extension(f'modules.{module}')
 
-            emb = disnake.Embed(
-                title='Отключение модуля:',
+            emb = discord.Embed(title='Переподключение модуля:',
                 description=f'> **Модуль "{module}" успешно переподключен!**',
-                color=GreenColor
-            )
+                color=BotConfig['GreenColor'])
 
-        except commands.ExtensionNotFound:
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description='> **Вы указали несуществующий модуль!**',
-                color=RedColor
-            )
+        except commands.ExtensionNotLoaded:
+            emb = discord.Embed(title='Ошибка:',
+                description='> **Вы указали несуществующий или отключенный модуль!**',
+                color=BotConfig['RedColor'])
 
     await ctx.send(embed=emb)
 
@@ -151,21 +128,18 @@ async def reload(ctx, module = None):
 @commands.bot_has_permissions(send_messages=True, embed_links=True)
 @commands.is_owner()
 async def info(ctx):
-    modules=''
+    modules = ''
     for file in os.listdir('./modules'):
         if file.endswith('.py'):
-            if f'modules.{file[:-3]}' in Bot.extensions:
-                modules += f'> **Модуль "{file[:-3]}":** подключен\n'
+            if f'modules.{file[:-3]}' in bot.extensions:
+                modules += f'> **Модуль "{file[:-3]}"** - подключен\n'
             else:
-                modules += f'> **Модуль "{file[:-3]}":** отключен\n'
+                modules += f'> **Модуль "{file[:-3]}"** - отключен\n'
 
-    emb = disnake.Embed(
-        title='Информация о модулях:',
+    emb = discord.Embed(title='Информация о модулях:',
         description=f'{modules}',
-        color=OrangeColor
-    )
-
+        color=BotConfig['OrangeColor'])
     await ctx.send(embed=emb)
 
 
-Bot.run(Token)
+bot.run(BotConfig['Token'])
