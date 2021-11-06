@@ -14,20 +14,12 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'[SYSTEM] {self.bot.user.name} connected!')
-        
-        await self.bot.change_presence(status=discord.Status.offline)
-        for guild in self.bot.guilds:
-            if MongoConfig['GuildsData'].count_documents({'GuildID': guild.id}) == 0:
-                MongoConfig['GuildsData'].insert_one({
-                    '_id': MongoConfig['GuildsData'].count_documents({}),
-                    'GuildID': guild.id,
-                })
 
-        #while True:
-        #    await self.bot.change_presence(activity=discord.Activity(name=f'{BotConfig["MainPrefix"]}help | {len(self.bot.guilds)} {BotPostfix(len(self.bot.guilds), "сервер", "сервера", "серверов")}',
-        #            type=discord.ActivityType.watching),
-        #        status=discord.Status.idle)
-        #    await asyncio.sleep(180)
+        while True:
+            await self.bot.change_presence(activity=discord.Activity(name=f'{BotConfig["MainPrefix"]}help | {len(self.bot.guilds)} {BotPostfix(len(self.bot.guilds), "сервер", "сервера", "серверов")}',
+                    type=discord.ActivityType.watching),
+                status=discord.Status.idle)
+            await asyncio.sleep(180)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
