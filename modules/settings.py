@@ -1,57 +1,68 @@
-import disnake
+import disnake as discord
 from disnake.ext import commands
-
-from utils.config import MongoSettings, BotSettings
-
-
-GreenColor = BotSettings['GreenColor'] # переменная с цветом эмбеда
-RedColor = BotSettings['RedColor'] # переменная с цветом эмбеда
-GuildsData = MongoSettings['GuildsData'] # переменная с дата-базой монги
+from utils.config import BotConfig, MongoConfig
+from utils.functions import BotPrefix
 
 
 class Settings(commands.Cog):
-    def __init__(self, Bot):
-        self.Bot = Bot
+    def __init__(self, bot):
+        self.bot = bot
 
-    
-    @commands.command()
+
+    @commands.command(name='set-prefix')
     @commands.cooldown(1, 2.0, commands.BucketType.user)
+    @commands.has_permissions(manage_guild=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
-    @commands.has_permissions(manage_guild=True) 
-    async def prefix(self, ctx, prefix = None):  
-        if prefix != None:
-            if len(str(prefix)) <= 3:
-                GuildsData.update_one({
-                    'GuildID': ctx.guild.id
-                },
-                {
-                    '$set': {
-                        'GuildPrefix': prefix
-                    }
-                })
+    async def _setprefix(self, ctx, new_prefix=None):
+        if not new_prefix:
+            emb = discord.Embed(title=f'Помощь по команде:',
+                description=f'> **{BotPrefix(self.bot, ctx.message)[2]}set-prefix [префикс]** - установить серверный префикс\n'
+                            f'> **{BotPrefix(self.bot, ctx.message)[2]}set-prefix standard** - установить стандартный префикс\n',
+                color=BotConfig['OrangeColor'])
 
-                emb = disnake.Embed(
-                    title=f'Смена префикса:',
-                    description=f'> **Вы успешно сменили префикс на "{prefix}"**',
-                    color=GreenColor
-                )
+        elif new_prefix == 'standard':
+            if 'GuildPrefix' not in MongoConfig['GuildsData'].find_one({'GuildID': ctx.guild.id}):
+                emb = discord.Embed(title='Ошибка:',
+                    description='> **На сервере уже стоит стандартный префикс!**',
+                    color=BotConfig['RedColor'])
 
             else:
-                emb = disnake.Embed(
-                    title='Ошибка:',
-                    description=f'> **Префикс не может быть больше 3 символов!**',
-                    color=RedColor
-                )
+                MongoConfig['GuildsData'].update_one({
+                        'GuildID': ctx.guild.id
+                    },
+                    {
+                        '$unset': {
+                            'GuildPrefix': ''
+                        }
+                    })
+
+                emb = discord.Embed(title='Смена префикса:',
+                    description=f'> **Вы успешно сменили префикс на "{BotConfig["MainPrefix"]}"!**',
+                    color=BotConfig['GreenColor'])
+
         else:
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description=f'> **Вы не указали префикс!**',
-                color=RedColor
-            )
-        
+            if len(str(new_prefix)) <= 3:
+                MongoConfig['GuildsData'].update_one({
+                        'GuildID': ctx.guild.id
+                    },
+                    {
+                        '$set': {
+                            'GuildPrefix': new_prefix
+                        }
+                    })
+
+                emb = discord.Embed(title='Смена префикса:',
+                    description=f'> **Вы успешно сменили префикс на "{new_prefix}"!**',
+                    color=BotConfig['GreenColor'])
+
+            else:
+                emb = discord.Embed(title='Ошибка:',
+                    description=f'> **Префикс не должен быть больше 3 символов!**',
+                    color=BotConfig['RedColor'])
+                
         await ctx.send(embed=emb)
 
 
-def setup(Bot):
-    Bot.add_cog(Settings(Bot))
-    print(f'[MODULES] Module "Settings" is loaded!')
+def setup(bot):
+    bot.add_cog(Settings(bot))
+    print(f'[SYSTEM] Module "settings" loaded!')
