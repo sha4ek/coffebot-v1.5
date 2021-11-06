@@ -2,15 +2,15 @@ import os
 from pymongo import MongoClient
 
 
-MongoSettings = {
+MongoConfig = {
     # База данных серверов
-    'GuildsData': MongoClient(f'mongodb+srv://{os.environ.get("MongoKey")}/Coffeebase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE').Coffeebase.guilds_data
+    'GuildsData': MongoClient(f'mongodb+srv://{os.environ.get('MongoKey')}.mongodb.net/UrarakaBase?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE').UrarakaBase.guildsdata,
 }
 
 
-BotSettings = {
+BotConfig = {
     # Основной префикс бота
-    'MainPrefix': 'cb.',
+    'MainPrefix': 'c.',
     # Токен бота
     'Token': os.environ.get('TokenKey'),
     # Цвет эмбеда в обычных ситуациях
@@ -20,17 +20,17 @@ BotSettings = {
     # Цвет эмбеда в успешных ситуациях
     'GreenColor': 0x90ee90,
     # Версия бота
-    'BotVersion': 'v1.4',
-    # Ссылка на сервер поддержки
-    'SupportGuild': 'https://discord.gg/7Ja4JNcqUB',
+    'BotVersion': '1.5',
     # Ссылка на приглашение бота
-    'BotInvite': 'https://discord.com/api/oauth2/authorize?client_id=875927971649712148&permissions=268528647&scope=bot',
-    # Канал аудита неизвестных ошибок бота
+    'BotInvite': 'https://discord.com/api/oauth2/authorize?client_id=875927971649712148&permissions=92167&scope=bot',
+    # Канал аудита неизвестных ошибок
     'ErrorsLogChannel': 896215788455886849,
-    # Канал аудита серверов бота
+    # Канал аудита серверов
     'GuildsLogChannel': 896215771347320872,
-    # Канал аудита личных сообщений бота
+    # Канал аудита личных сообщений
     'PrivateMessagesLogChannel': 896546624615088130,
-    # Канал аудита использованных команд бота
-    'CommandsLogChannel': 896546682068693002
+    # Канал аудита использованных команд
+    'UsingCommandsLogChannel': 896546682068693002,
+    # ID разработчика
+    'DeveloperID': 546502974499717122
 }
