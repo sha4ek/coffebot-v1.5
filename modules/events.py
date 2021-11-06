@@ -1,54 +1,33 @@
-import disnake, asyncio, random
+import disnake as discord
+import asyncio
 from disnake.ext import commands
-
-from utils.config import BotSettings, MongoSettings
+from utils.config import BotConfig, MongoConfig
 from utils.functions import BotPostfix
 from utils.translations import DiscordPermissions
 
 
-MainPrefix = BotSettings['MainPrefix'] # переменная с основным префиксом
-GreenColor = BotSettings['GreenColor'] # переменная с цветом эмбеда
-RedColor = BotSettings['RedColor'] # переменная с цветом эмбеда
-OrangeColor = BotSettings['OrangeColor'] # переменная с цветом эмбеда
-GuildsData = MongoSettings['GuildsData'] # переменная с дата-базой монги
-
-
 class Events(commands.Cog):
-    def __init__(self, Bot):
-        self.Bot = Bot
+    def __init__(self, bot):
+        self.bot = bot
 
 
     @commands.Cog.listener()
     async def on_ready(self):
-        developer = self.Bot.get_user(546502974499717122)
+        print(f'[SYSTEM] {self.bot.user.name} connected!')
+        
+        await self.bot.change_presence(status=discord.Status.offline)
+        for guild in self.bot.guilds:
+            if MongoConfig['GuildsData'].count_documents({'GuildID': guild.id}) == 0:
+                MongoConfig['GuildsData'].insert_one({
+                    '_id': MongoConfig['GuildsData'].count_documents({}),
+                    'GuildID': guild.id,
+                })
 
-        emb = disnake.Embed(
-            title='Подключение бота:',
-            description=f'> **{self.Bot.user.name} успешно подключен!**',
-            color=GreenColor
-        )
-
-        await developer.send(embed=emb)
-        print(f'[SYSTEM] {self.Bot.user.name} is connected!')
-
-        while True:
-            await self.Bot.change_presence(
-                activity=disnake.Activity(
-                    name=f'{MainPrefix}help | {len(self.Bot.guilds)} {BotPostfix(len(self.Bot.guilds), "сервер", "сервера", "серверов")}',
-                    type=disnake.ActivityType.watching
-                ),
-                status=disnake.Status.idle
-            )
-            await asyncio.sleep(6)
-            await self.Bot.change_presence(
-                activity=disnake.Activity(
-                    name=f'{MainPrefix}help | {len(self.Bot.users)} {BotPostfix(len(self.Bot.users), "пользователь", "пользователя", "пользователей")}',
-                    type=disnake.ActivityType.watching
-                ),
-                status=disnake.Status.idle
-            )
-            await asyncio.sleep(6)
-
+        #while True:
+        #    await self.bot.change_presence(activity=discord.Activity(name=f'{BotConfig["MainPrefix"]}help | {len(self.bot.guilds)} {BotPostfix(len(self.bot.guilds), "сервер", "сервера", "серверов")}',
+        #            type=discord.ActivityType.watching),
+        #        status=discord.Status.idle)
+        #    await asyncio.sleep(180)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -58,91 +37,85 @@ class Events(commands.Cog):
             return
 
         elif isinstance(error, commands.MemberNotFound):
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description='> **Вы указали несуществующего участника!**',
-                color=RedColor
-                )
+            emb = discord.Embed(title='Ошибка:',
+                description='> **Вы указали несуществующего участника или того, кого нет на сервере!**',
+                color=BotConfig['RedColor'])
             await ctx.send(embed=emb)
 
         elif isinstance(error, commands.MissingPermissions):
-            emb = disnake.Embed(
-                title='Ошибка:',
-                description=f'> **У вас отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions )}" на использование команды!**',
-                color=RedColor)
+            emb = discord.Embed(title='Ошибка:',
+                description=f'> **У вас отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**',
+                color=BotConfig['RedColor'])
             await ctx.send(embed=emb)
 
         elif isinstance(error, commands.BotMissingPermissions):
             permissions = ctx.guild.me.guild_permissions
 
             if not permissions.send_messages:
-                emb = disnake.Embed(
-                    title='Ошибка:',
+                emb = discord.Embed(title='Ошибка:',
                     description=f'> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions )}" на использование команды!**',
-                    color=RedColor
+                    color=BotConfig['RedColor']
                     )
                 await ctx.author.send(embed=emb)
 
-            if not permissions.embed_links:
-                await ctx.send(f'**Ошибка:**\n> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions )}" на использование команды!**')
+            elif not permissions.embed_links:
+                await ctx.send(f'**Ошибка:**\n> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**')
             
             else:
-                emb = disnake.Embed(
-                    title='Ошибка:',
+                emb = discord.Embed(title='Ошибка:',
                     description=f'> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**',
-                    color=RedColor)
+                    color=BotConfig['RedColor'])
                 await ctx.send(embed=emb)
 
         elif isinstance(error, commands.NotOwner):
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не разработчик бота!**',
-                color=RedColor
-                )
+                color=BotConfig['RedColor'])
+            await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.BadArgument):
+            emb = discord.Embed(title='Ошибка:',
+                description='> **Вы указали неверный аргумент!**',
+                color=BotConfig['RedColor'])
             await ctx.send(embed=emb)
 
         else:
-            channel = self.Bot.get_channel(BotSettings['ErrorsLogChannel'])
+            ErrorsLogChannel = self.bot.get_channel(BotConfig['ErrorsLogChannel'])
 
-            emb = disnake.Embed(
-                title='Ошибка:',
+            emb = discord.Embed(title='Ошибка:',
                 description=f'> **Произошла неизвестная ошибка!**',
-                color=RedColor
-                )
-
-            emb1 = disnake.Embed(
-                title='Неизвестная ошибка:',
-                description=f'> **Сервер:** {ctx.guild.name}\n'
-                            f'> **Команда:** {ctx.message.content}\n'
-                            f'> **Ошибка:** \n```py\n{error}\n```',
-                color=RedColor
-                )
-
-            await ctx.send(embed=emb)
-            await channel.send(embed=emb1)
-            raise error
+                color=BotConfig['RedColor'])
+            emb1 = discord.Embed(title='Неизвестная ошибка:',
+                description=f'> **Сервер** - {ctx.guild.name}\n'
+                            f'> **Пользователь** - {ctx.author} ({ctx.author.id})\n'
+                            f'> **Команда** - {ctx.message.content}\n'
+                            f'> **Ошибка** - \n```py\n{error}\n```',
+                color=BotConfig['RedColor'])
+            
+            if ctx.command.name != 'eval':
+                await ctx.send(embed=emb)
+                await ErrorsLogChannel.send(embed=emb1)
+                print(f'[ERROR] Error occurred in the "{ctx.command}" command! More:')
+                raise error
 
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        GuildsLogChannel = self.Bot.get_channel(BotSettings['GuildsLogChannel'])
-
-        GuildsData.insert_one({
+        GuildsLogChannel = self.bot.get_channel(BotConfig['GuildsLogChannel'])
+        MongoConfig['GuildsData'].insert_one({
+            '_id': MongoConfig['GuildsData'].count_documents({}),
             'GuildID': guild.id,
-            'GuildPrefix': MainPrefix
-            })
+        })
 
-        emb = disnake.Embed(
-            title='Бот добавлен на сервер:',
-            description=f'> **Название:** {guild.name}\n'
-                        f'> **Идентификатор:** {guild.id}\n'
-                        f'> **Создатель:** {guild.owner} ({guild.owner_id})\n'
-                        f'> **Количество участников:** {guild.member_count}',
-            color=GreenColor
-            )
+        emb = discord.Embed(title='Добавление на сервер:',
+            description=f'> **Название** - {guild.name}\n'
+                        f'> **Идентификатор** - {guild.id}\n'
+                        f'> **Создатель** - {guild.owner} ({guild.owner_id})\n'
+                        f'> **Количество участников** - {guild.member_count}',
+            color=BotConfig['GreenColor'])
         emb.set_thumbnail(url=guild.icon)
 
-        if guild.banner != None:
+        if guild.banner:
             emb.set_image(url=guild.banner)
 
         await GuildsLogChannel.send(embed=emb)
@@ -150,73 +123,67 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        GuildsLogChannel = self.Bot.get_channel(BotSettings['GuildsLogChannel'])
-
-        GuildsData.delete_one({
+        GuildsLogChannel = self.bot.get_channel(BotConfig['GuildsLogChannel'])
+        MongoConfig['GuildsData'].delete_one({
             'GuildID': guild.id,
-            'GuildPrefix': MainPrefix
-            })
+        })
 
-        emb = disnake.Embed(
-            title='Бот убран с сервера:',
-            description=f'> **Название:** {guild.name}\n'
-                        f'> **Идентификатор:** {guild.id}\n'
-                        f'> **Создатель:** {guild.owner} ({guild.owner_id})\n'
-                        f'> **Количество участников:** {guild.member_count}',
-            color=RedColor
-            )
+        emb = discord.Embed(title='Исключение с сервера:',
+            description=f'> **Название** - {guild.name}\n'
+                        f'> **Идентификатор** - {guild.id}\n'
+                        f'> **Создатель** - {guild.owner} ({guild.owner_id})\n'
+                        f'> **Количество участников** - {guild.member_count}',
+            color=BotConfig['RedColor'])
         emb.set_thumbnail(url=guild.icon)
 
-        if guild.banner != None:
+        if guild.banner:
             emb.set_image(url=guild.banner)
-            
+
         await GuildsLogChannel.send(embed=emb)
 
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author != self.Bot.user:
-            if not message.guild:
-                PrivateMessagesLogChannel = self.Bot.get_channel(BotSettings['PrivateMessagesLogChannel'])
-                
+        if message.author.id != (self.bot.user.id and BotConfig['DeveloperID']) and not message.guild:
+                PrivateMessagesLogChannel = self.bot.get_channel(BotConfig['PrivateMessagesLogChannel'])
+
                 msg = ''
-                iurl = ''
                 for i in message.content:
-                    if i != None:
-                        msg += f'> **Сообщение:** {message.content}\n'
+                    if i:
+                        msg += f'> **Сообщение** - {message.content}\n'
                         break
-                    
+
+                iurl = ''
                 for i in message.attachments:
-                    if i != []:
-                        msg += f'> **Файл:** {message.attachments[0].filename} ({message.attachments[0].url})\n'
-                    if i.url != None:
+                    if i:
+                        msg += f'> **Файл** - {message.attachments[0].filename} ({message.attachments[0].url})\n'
+                    if i.url:
                         iurl = i.url
 
-                emb = disnake.Embed(
-                    title='Личные сообщения бота:',
-                    description=f'> **Пользователь:** {message.author} ({message.author.id})\n'
+                emb = discord.Embed(title='Личные сообщения:',
+                    description=f'> **Пользователь** - {message.author} ({message.author.id})\n'
                                 f'{msg}',
-                    color=OrangeColor) 
+                    color=BotConfig['OrangeColor']) 
                 emb.set_thumbnail(url=message.author.avatar)
                 emb.set_image(url=iurl)
-
                 await PrivateMessagesLogChannel.send(embed=emb)
 
 
     @commands.Cog.listener()
     async def on_command(self, ctx):
-        CommandsLogChannel = self.Bot.get_channel(BotSettings['CommandsLogChannel'])
+        CommandsLogChannel = self.bot.get_channel(BotConfig['UsingCommandsLogChannel'])
 
-        emb = disnake.Embed(
-            title='Использование команды:',
-            description=f'> **Пользователь:** {ctx.author} ({ctx.author.id})\n'
-                        f'> **Команда:** {ctx.message.content}',
-            color=OrangeColor)
+        emb = discord.Embed(title='Использование команды:',
+            description=f'> **Сервер** - {ctx.guild}\n'
+                        f'> **Пользователь** - {ctx.author} ({ctx.author.id})\n'
+                        f'> **Команда** - {ctx.message.content}',
+            color=BotConfig['OrangeColor'])
         emb.set_thumbnail(url=ctx.author.avatar)
 
-        await CommandsLogChannel.send(embed=emb)
+        if ctx.author.id != BotConfig['DeveloperID']:
+            await CommandsLogChannel.send(embed=emb)
 
 
-def setup(Bot):
-    Bot.add_cog(Events(Bot))
-    print(f'[MODULES] Module "Events" is loaded!')
+def setup(bot):
+    bot.add_cog(Events(bot))
+    print(f'[SYSTEM] Module "events" loaded!')
