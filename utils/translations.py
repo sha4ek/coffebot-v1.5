@@ -1,52 +1,51 @@
-import disnake
-
-
 DiscordPermissions = {
-    'view_channel': 'просматривать каналы',
+    'add_reactions': 'добавлять реакции',
+    'administrator': 'администрировать',
+    'attach_files': 'прикреплять файлы',
+    'ban_members': 'блокировать участников',
+    'change_nickname': 'изменять никнейм',
+    'connect': 'подключаться',
+    'create_instant_invite': 'создавать приглашения',
+    'create_private_threads': 'создавать приватные ветки',
+    'create_public_threads': 'создавать публичные ветки',
+    'deafen_members': 'отключать участникам звук',
+    'embed_links': 'встраивать ссылки',
+    'kick_members': 'исключать участников',
     'manage_channels': 'управлять каналами',
-    'manage_roles': 'управлять ролями',
     'manage_emojis_and_stickers': 'управлять эмодзи и стикерами',
-    'view_audit_log': 'просматривать журнала аудита',
-    'view_guild_insinghts': 'просмотр аналитики сервера',
-    'manage_webhooks': 'управлять вебхуками (webhooks)',
+    'manage_events': 'управлять мероприятиями',
     'manage_guild': 'управлять сервером',
-    'create_instant_invite': 'создание приглашения',
-    'change_nickname': 'изменить никнейм',
+    'manage_messages': 'управлять сообщениями',
     'manage_nicknames': 'управлять никнеймами',
-    'kick_members': 'выгонять участников',
-    'ban_members': 'банить участников',
+    'manage_roles': 'управлять ролями',
+    'manage_threads': 'управлять ветками',
+    'manage_webhooks': 'управлять вебхуками',
+    'mention_everyone': 'упоминать @everyone, @here и роли',
+    'move_members': 'перемещать участников',
+    'mute_members': 'отключать участникам микрофон',
+    'priority_speaker': 'использовать режим приоритета',
+    'read_message_history': 'читать историю сообщений',
+    'request_to_speak': 'попросить выступить',
     'send_messages': 'отправлять сообщения',
     'send_messages_in_threads': 'отправлять сообщения в ветки',
-    'create_public_threads': 'создать публичные ветки',
-    'create_private_threads': 'создание приватных веток',
-    'embed_links': 'встраивать ссылки',
-    'attach_files': 'прикреплять файлы',
-    'add_reactions': 'добавлять реакции',
+    'send_tts_messages': 'отправлять сообщения с преобразованием текста в речь',
+    'speak': 'говорить',
+    'stream': 'стримить',
     'use_external_emojis': 'использовать внешние эмодзи',
     'use_external_stickers': 'использовать внешние стикеры',
-    'mention_everyone': 'упоминание @everyone, @here и всех ролей',
-    'manage_messages': 'управлять сообщениями',
-    'manage_threads': 'управление ветками',
-    'read_message_history': 'читать историю сообщений',
-    'send_tts_messages': 'отправка сообщений text-to-speech',
-    'use_application_commands': 'использовать команды приложения',
-    'connect': 'подключаться',
-    'speak': 'говорить',
-    'video': 'видео',
-    'use_voice_activity': 'использовать режим активации по голосу',
-    'priority_speaker': 'приоритетный режим',
-    'mute_members': 'отключать участникам микрофон',
-    'deafen_members': 'отключать участникам звук',
-    'move_members': 'перемещать участников',
-    'administrator': 'администратор'
+    'use_slash_commands': 'использовать слеш-команды',
+    'use_voice_activation': 'использовать режим активации по голосу',
+    'view_audit_log': 'просматривать журнала аудита',
+    'view_channel': 'просматривать каналы',
+    'view_guild_insights': 'просматривать серверную аналитику',
 }
 
 
 DiscordStatuses = {
-    disnake.Status.online: 'в сети',
-    disnake.Status.idle: 'неактивен',
-    disnake.Status.dnd: 'не беспокоить',
-    disnake.Status.offline: 'не в сети'
+    'online': 'в сети',
+    'idle': 'неактивен',
+    'dnd': 'не беспокоить',
+    'offline': 'не в сети'
 }
 
 
@@ -64,4 +63,12 @@ DiscordSlowmods = {
     3600: '1 час',
     7200: '2 часа',
     21600: '6 часов'
+}
+
+
+DiscordVerificationLevel = {
+    'low': 'низкий',
+    'medium': 'средний',
+    'high': 'высокий',
+    'highest': 'очень высокий'
 }
