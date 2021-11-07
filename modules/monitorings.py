@@ -1,10 +1,11 @@
 import blist
 from disnake.ext import commands, tasks
+from utils.config import BotConfig
 
 class Monitorings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.blist = blist.Blist(self.bot, token='PDW0Stk7hsVDrl-cv_av')
+        self.blist = blist.Blist(self.bot, token=BotConfig['Blist'])
 
     
     @tasks.loop(seconds=120)
