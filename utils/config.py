@@ -13,6 +13,8 @@ BotConfig = {
     'MainPrefix': 'c.',
     # Токен бота
     'Token': os.environ.get('TokenKey'),
+    # Токен мониторинга Blist
+    'Blist': os.environ.get('BlistKey'),
     # Цвет эмбеда в обычных ситуациях
     'OrangeColor': 0xffa500,
     # Цвет эмбеда в ошибочных ситуациях
