@@ -105,7 +105,9 @@ class Events(commands.Cog):
                         f'> **Создатель** - {guild.owner} ({guild.owner_id})\n'
                         f'> **Количество участников** - {guild.member_count}',
             color=BotConfig['GreenColor'])
-        emb.set_thumbnail(url=guild.icon)
+        
+        if guild.icon:
+            emb.set_thumbnail(url=guild.icon)
 
         if guild.banner:
             emb.set_image(url=guild.banner)
@@ -126,7 +128,9 @@ class Events(commands.Cog):
                         f'> **Создатель** - {guild.owner} ({guild.owner_id})\n'
                         f'> **Количество участников** - {guild.member_count}',
             color=BotConfig['RedColor'])
-        emb.set_thumbnail(url=guild.icon)
+        
+        if guild.icon:
+            emb.set_thumbnail(url=guild.icon)
 
         if guild.banner:
             emb.set_image(url=guild.banner)
