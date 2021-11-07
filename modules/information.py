@@ -88,8 +88,8 @@ class Information(commands.Cog):
                         f'> **Количество участников** - {ctx.guild.member_count}\n',
             color=BotConfig['OrangeColor'])
         
-        if guild.icon:
-            emb.set_thumbnail(url=guild.icon)
+        if ctx.guild.icon:
+            emb.set_thumbnail(url=ctx.guild.icon)
 
         if ctx.guild.banner:
             emb.set_image(url=ctx.guild.banner)
