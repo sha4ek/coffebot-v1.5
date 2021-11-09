@@ -18,7 +18,7 @@ class Monitorings(commands.Cog):
         response = requests.post(f'https://api.boticord.top/v1/stats',
             data=json.dumps(data),
             headers={
-                'Authorization': BotConfig'Boticord',
+                'Authorization': BotConfig['Boticord'],
                 'Content-Type': 'application/json'
             })
 
