@@ -1,4 +1,6 @@
 import blist
+import requests
+import json
 from disnake.ext import commands, tasks
 from utils.config import BotConfig
 
@@ -15,7 +17,7 @@ class Monitorings(commands.Cog):
                 'users': len(self.bot.users)
             }
         
-        response = requests.post(f'https://api.boticord.top/v1/stats',
+        requests.post(f'https://api.boticord.top/v1/stats',
             data=json.dumps(data),
             headers={
                 'Authorization': BotConfig['Boticord'],
