@@ -6,23 +6,28 @@ class Monitorings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.blist = blist.Blist(self.bot, token=BotConfig['Blist'])
-        self.blisthook = blist.WebhookServer(self.blist)
 
     
-    @tasks.loop(seconds=120)
-    async def blist_post(self):
+    @tasks.loop(minutes=15)
+    async def post(self):
+        data = {
+                'servers': len(self.bot.guilds),
+                'users': len(self.bot.users)
+            }
+        
+        response = requests.post(f'https://api.boticord.top/v1/stats',
+            data=json.dumps(data),
+            headers={
+                'Authorization': BotConfig'Boticord',
+                'Content-Type': 'application/json'
+            })
+
         await self.blist.post_bot_stats()
 
     
     @commands.Cog.listener()
     async def on_ready(self):
-        self.blist_post.start()
-        await self.blisthook.run()
-        
-    
-    @commands.Cog.listener()
-    async def on_blist_vote(self, user_id, time):
-        pass
+        self.post.start()
 
     
 def setup(bot):
