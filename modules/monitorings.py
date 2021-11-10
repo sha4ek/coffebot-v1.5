@@ -10,7 +10,7 @@ class Monitorings(commands.Cog):
         self.blist = blist.Blist(self.bot, token=BotConfig['Blist'])
 
     
-    @tasks.loop(minutes=15)
+    @tasks.loop(minutes=30)
     async def post(self):
         BoticordData = {
                 'servers': len(self.bot.guilds),
