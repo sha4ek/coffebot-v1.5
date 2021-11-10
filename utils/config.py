@@ -17,6 +17,8 @@ BotConfig = {
     'Blist': os.environ.get('BlistKey'),
     # Токен мониторинга Boticord
     'Boticord': os.environ.get('BoticordKey'),
+    # Токен мониторинга Bladelist
+    'Bladelist': os.environ.get('BladelistKey'),
     # Цвет эмбеда в обычных ситуациях
     'OrangeColor': 0xffa500,
     # Цвет эмбеда в ошибочных ситуациях
