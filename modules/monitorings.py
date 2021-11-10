@@ -29,7 +29,7 @@ class Monitorings(commands.Cog):
                 'Content-Type': 'application/json'
             })
         requests.post(f'https://api.bladelist.gg/bots/875927971649712148',
-            data=json.dumps(data),
+            data=json.dumps(BladelistData),
             headers={
                 'Authorization': f'Token {BotConfig["Bladelist"]}',
                 'Content-Type': 'application/json'
