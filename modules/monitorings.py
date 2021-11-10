@@ -12,18 +12,28 @@ class Monitorings(commands.Cog):
     
     @tasks.loop(minutes=15)
     async def post(self):
-        data = {
+        BoticordData = {
                 'servers': len(self.bot.guilds),
+                'shards': self.bot.shard_count or 1
                 'users': len(self.bot.users)
+            }
+        BladelistData = {
+                'server_count': len(self.bot.guilds),
+                'shard_count': self.bot.shard_count or 1
             }
         
         requests.post(f'https://api.boticord.top/v1/stats',
-            data=json.dumps(data),
+            data=json.dumps(BoticordData),
             headers={
                 'Authorization': BotConfig['Boticord'],
                 'Content-Type': 'application/json'
             })
-
+        requests.post(f'https://api.bladelist.gg/bots/875927971649712148',
+            data=json.dumps(data),
+            headers={
+                'Authorization': f'Token {BotConfig["Bladelist"]}',
+                'Content-Type': 'application/json'
+            })
         await self.blist.post_bot_stats()
 
     
