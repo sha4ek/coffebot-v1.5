@@ -14,7 +14,7 @@ class Monitorings(commands.Cog):
     async def post(self):
         BoticordData = {
                 'servers': len(self.bot.guilds),
-                'shards': self.bot.shard_count or 1
+                'shards': self.bot.shard_count or 1,
                 'users': len(self.bot.users)
             }
         BladelistData = {
