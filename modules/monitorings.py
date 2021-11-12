@@ -21,6 +21,9 @@ class Monitorings(commands.Cog):
                 'server_count': len(self.bot.guilds),
                 'shard_count': self.bot.shard_count or 1
             }
+        DiscordBoatsData = {
+                'server_count': len(self.bot.guilds),
+            }
         
         requests.post(f'https://api.boticord.top/v1/stats',
             data=json.dumps(BoticordData),
@@ -32,6 +35,12 @@ class Monitorings(commands.Cog):
             data=json.dumps(BladelistData),
             headers={
                 'Authorization': f'Token {BotConfig["Bladelist"]}',
+                'Content-Type': 'application/json'
+            })
+        requests.post(f'https://discord.boats/api/bot/875927971649712148',
+            data=json.dumps(DiscordBoatsData),
+            headers={
+                'Authorization': 'kxNTVE5UF5zwA7USPxaDXm11ym0b9OBR5Fv1IsCvBA4V18FGDbAvNByeCHXfCTInxo32zGziT8Q0fyos46FlQV3NMYVWGlIEgvs3S4t7giEmeZIH6jS8QY65516hO1l6GsBVjJi64MKXuiVwsB09qPX4GcO',
                 'Content-Type': 'application/json'
             })
         await self.blist.post_bot_stats()
