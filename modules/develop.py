@@ -24,6 +24,7 @@ class Develop(commands.Cog):
                 'discord': discord,
                 'bot': self.bot,
                 'ctx': ctx,
+                'GuildsData': BotConfig['GuildsData']
             }
 
             start = time.time()
