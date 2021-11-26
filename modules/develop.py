@@ -2,7 +2,7 @@ import disnake as discord
 import time
 import aeval
 from disnake.ext import commands
-from utils.config import BotConfig
+from utils.config import BotConfig, MongoConfig
 
 
 class Develop(commands.Cog):
@@ -24,7 +24,7 @@ class Develop(commands.Cog):
                 'discord': discord,
                 'bot': self.bot,
                 'ctx': ctx,
-                'GuildsData': BotConfig['GuildsData']
+                'GuildsData': MongoConfig['GuildsData']
             }
 
             start = time.time()
