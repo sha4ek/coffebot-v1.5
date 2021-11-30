@@ -94,23 +94,27 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         GuildsLogChannel = self.bot.get_channel(BotConfig['GuildsLogChannel'])
-        MongoConfig['GuildsData'].insert_one({
-            '_id': MongoConfig['GuildsData'].count_documents({}),
-            'GuildID': guild.id,
-        })
-
         emb = discord.Embed(title='Добавление на сервер:',
-            description=f'> **Название** - {guild.name}\n'
-                        f'> **Идентификатор** - {guild.id}\n'
-                        f'> **Создатель** - {guild.owner} ({guild.owner_id})\n'
-                        f'> **Количество участников** - {guild.member_count}',
-            color=BotConfig['GreenColor'])
+                description=f'> **Название** - {guild.name}\n'
+                            f'> **Идентификатор** - {guild.id}\n'
+                            f'> **Создатель** - {guild.owner} ({guild.owner_id})\n'
+                            f'> **Количество участников** - {guild.member_count}',
+                color=BotConfig['GreenColor'])
         
         if guild.icon:
             emb.set_thumbnail(url=guild.icon)
 
         if guild.banner:
             emb.set_image(url=guild.banner)
+        
+        try:
+            MongoConfig['GuildsData'].insert_one({
+                '_id': MongoConfig['GuildsData'].count_documents({}),
+                'GuildID': guild.id,
+            })
+                
+        except Exception as exception:
+            await ctx.send(exception)
 
         await GuildsLogChannel.send(embed=emb)
 
