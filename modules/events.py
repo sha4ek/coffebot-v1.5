@@ -109,7 +109,6 @@ class Events(commands.Cog):
         
         try:
             MongoConfig['GuildsData'].insert_one({
-                '_id': MongoConfig['GuildsData'].count_documents({}),
                 'GuildID': guild.id,
             })
                 
