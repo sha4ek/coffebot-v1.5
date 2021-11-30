@@ -114,7 +114,7 @@ class Events(commands.Cog):
             })
                 
         except Exception as exception:
-            await ctx.send(exception)
+            await GuildsLogChannel.send(exception)
 
         await GuildsLogChannel.send(embed=emb)
 
