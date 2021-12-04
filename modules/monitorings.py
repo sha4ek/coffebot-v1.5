@@ -28,7 +28,7 @@ class Monitorings(commands.Cog):
         requests.post(f'https://discord.boats/api/bot/875927971649712148',
             data=json.dumps(DiscordBoatsData),
             headers={
-                'Authorization': 'kxNTVE5UF5zwA7USPxaDXm11ym0b9OBR5Fv1IsCvBA4V18FGDbAvNByeCHXfCTInxo32zGziT8Q0fyos46FlQV3NMYVWGlIEgvs3S4t7giEmeZIH6jS8QY65516hO1l6GsBVjJi64MKXuiVwsB09qPX4GcO',
+                'Authorization': BotConfig['Discord Boats'],
                 'Content-Type': 'application/json'
             })
 
