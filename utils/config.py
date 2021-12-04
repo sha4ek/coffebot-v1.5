@@ -15,6 +15,8 @@ BotConfig = {
     'Token': os.environ.get('TokenKey'),
     # Токен мониторинга Boticord
     'Boticord': os.environ.get('BoticordKey'),
+    # Токен мониторинга Discord Boats
+    'Discord Boats': os.environ.get('DiscordBoatsKey'),
     # Цвет эмбеда в обычных ситуациях
     'OrangeColor': 0xffa500,
     # Цвет эмбеда в ошибочных ситуациях
