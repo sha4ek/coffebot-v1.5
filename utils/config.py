@@ -13,8 +13,6 @@ BotConfig = {
     'MainPrefix': 'c.',
     # Токен бота
     'Token': os.environ.get('TokenKey'),
-    # Токен мониторинга Blist
-    'Blist': os.environ.get('BlistKey'),
     # Токен мониторинга Boticord
     'Boticord': os.environ.get('BoticordKey'),
     # Цвет эмбеда в обычных ситуациях
