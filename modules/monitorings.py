@@ -1,4 +1,3 @@
-import blist
 import requests
 import json
 from disnake.ext import commands, tasks
@@ -7,7 +6,6 @@ from utils.config import BotConfig
 class Monitorings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.blist = blist.Blist(self.bot, token=BotConfig['Blist'])
 
     
     @tasks.loop(minutes=30)
@@ -33,7 +31,6 @@ class Monitorings(commands.Cog):
                 'Authorization': 'kxNTVE5UF5zwA7USPxaDXm11ym0b9OBR5Fv1IsCvBA4V18FGDbAvNByeCHXfCTInxo32zGziT8Q0fyos46FlQV3NMYVWGlIEgvs3S4t7giEmeZIH6jS8QY65516hO1l6GsBVjJi64MKXuiVwsB09qPX4GcO',
                 'Content-Type': 'application/json'
             })
-        await self.blist.post_bot_stats()
 
     
     @commands.Cog.listener()
