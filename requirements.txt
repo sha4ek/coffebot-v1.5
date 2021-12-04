@@ -6,4 +6,3 @@ requests
 nekos.py
 CoffeePaginator
 psutil
-blistpy
