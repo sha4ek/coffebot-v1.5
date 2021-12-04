@@ -18,6 +18,10 @@ class Monitorings(commands.Cog):
         DiscordBoatsData = {
                 'server_count': len(self.bot.guilds),
             }
+        TopggData = {
+                'server_count': len(self.bot.guilds),
+                'shards': self.bot.shard_count or 1,
+            }
         
         requests.post(f'https://api.boticord.top/v1/stats',
             data=json.dumps(BoticordData),
@@ -29,6 +33,12 @@ class Monitorings(commands.Cog):
             data=json.dumps(DiscordBoatsData),
             headers={
                 'Authorization': BotConfig['Discord Boats'],
+                'Content-Type': 'application/json'
+            })
+        requests.post(f'https://top.gg/api/bots/875927971649712148/stats',
+            data=json.dumps(TopggData),
+            headers={
+                'Authorization': BotConfig['Topgg'],
                 'Content-Type': 'application/json'
             })
 
