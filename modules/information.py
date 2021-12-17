@@ -8,6 +8,10 @@ from utils.config import BotConfig
 from utils.translations import DiscordStatuses, DiscordSlowmods, DiscordVerificationLevel
 
 
+view = discord.ui.View()
+view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+
+
 class Information(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -38,7 +42,7 @@ class Information(commands.Cog):
         if ctx.author.id == BotConfig['DeveloperID']:
             emb.description += f'> **Использованно ОЗУ** - {used_bot}'
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command(name='user-info')
@@ -69,7 +73,7 @@ class Information(commands.Cog):
             color=BotConfig['OrangeColor'])
         emb.set_thumbnail(url=user.avatar)
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
     
     @commands.command(name='guild-info')
@@ -95,7 +99,7 @@ class Information(commands.Cog):
         if ctx.guild.banner:
             emb.set_image(url=ctx.guild.banner)
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command(name='channel-info')
@@ -120,7 +124,7 @@ class Information(commands.Cog):
                         f'> **Создан** - <t:{int(channel.created_at.timestamp())}:D>',
             color=BotConfig['OrangeColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
 def setup(bot):
