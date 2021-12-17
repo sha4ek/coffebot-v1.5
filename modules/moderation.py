@@ -7,7 +7,6 @@ from utils.functions import BotPostfix
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.view = discord.ui.View().add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
 
 
     @commands.command()
@@ -15,6 +14,9 @@ class Moderation(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, read_message_history=True, manage_messages=True)
     async def clear(self, ctx, amount: int=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+
         if not amount:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали количество сообщений!**',
@@ -31,7 +33,7 @@ class Moderation(commands.Cog):
                 description=f'> **Из чата удалено {amount} {BotPostfix(amount, "сообщение", "сообщения", "сообщений")}!**',
                 color=BotConfig['GreenColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb, view=self.view)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -39,6 +41,8 @@ class Moderation(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, ban_members=True)
     async def ban(self, ctx, member: discord.Member=None, *, reason=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not member:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
@@ -89,7 +93,7 @@ class Moderation(commands.Cog):
             
             await ctx.guild.ban(member, reason=reason)
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb, view=self.view)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -97,6 +101,8 @@ class Moderation(commands.Cog):
     @commands.has_permissions(kick_members=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, kick_members=True)
     async def kick(self, ctx, member: discord.Member=None, *, reason=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not member:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
@@ -147,7 +153,7 @@ class Moderation(commands.Cog):
             
             await ctx.guild.kick(member, reason=reason)
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb, view=self.view)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -155,6 +161,8 @@ class Moderation(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, ban_members=True)
     async def unban(self, ctx, member: discord.User=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not member:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
@@ -176,7 +184,7 @@ class Moderation(commands.Cog):
                     description=f'> **Участник не забанен на сервере!**',
                     color=BotConfig['RedColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb, view=self.view)
+        await ctx.send(embed=emb, view=view)
 
 
 def setup(bot):
