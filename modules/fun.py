@@ -7,6 +7,10 @@ from utils.config import BotConfig
 from utils.functions import BotPrefix
 
 
+view = discord.ui.View()
+view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+
+
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -22,7 +26,7 @@ class Fun(commands.Cog):
                         f'> **{BotPrefix(self.bot, ctx.message)[2]}activity poker** - покер в голосовом канале',
             color=BotConfig['OrangeColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @activity.command()
@@ -55,7 +59,7 @@ class Fun(commands.Cog):
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
                 color=BotConfig['RedColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @activity.command()
@@ -88,7 +92,7 @@ class Fun(commands.Cog):
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
                 color=BotConfig['RedColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @activity.command()
@@ -121,7 +125,7 @@ class Fun(commands.Cog):
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
                 color=BotConfig['RedColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -144,7 +148,7 @@ class Fun(commands.Cog):
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('kiss'))
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -167,7 +171,7 @@ class Fun(commands.Cog):
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('hug'))
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -190,7 +194,7 @@ class Fun(commands.Cog):
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('slap'))
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -213,7 +217,7 @@ class Fun(commands.Cog):
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('pat'))
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
 def setup(bot):
