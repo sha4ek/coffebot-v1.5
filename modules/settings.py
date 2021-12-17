@@ -3,6 +3,9 @@ from disnake.ext import commands
 from utils.config import BotConfig, MongoConfig
 from utils.functions import BotPrefix
 
+view = discord.ui.View()
+view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+
 
 class Settings(commands.Cog):
     def __init__(self, bot):
@@ -60,7 +63,7 @@ class Settings(commands.Cog):
                     description=f'> **Префикс не должен быть больше 3 символов!**',
                     color=BotConfig['RedColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
 def setup(bot):
