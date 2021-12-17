@@ -54,7 +54,7 @@ class Events(commands.Cog):
                 await ctx.author.send(embed=emb)
 
             elif not permissions.embed_links:
-                await ctx.send(f'**Ошибка:**\n> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**\n{BotConfig['Slashes'])}')
+                await ctx.send(f'**Ошибка:**\n> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**\n{BotConfig["Slashes"])}')
             
             else:
                 emb = discord.Embed(title='Ошибка:',
