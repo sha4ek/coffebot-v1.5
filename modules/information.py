@@ -37,7 +37,7 @@ class Information(commands.Cog):
 
         if ctx.author.id == BotConfig['DeveloperID']:
             emb.description += f'> **Использованно ОЗУ** - {used_bot}'
-
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -68,6 +68,7 @@ class Information(commands.Cog):
                         f'{activities}',
             color=BotConfig['OrangeColor'])
         emb.set_thumbnail(url=user.avatar)
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
     
@@ -93,7 +94,7 @@ class Information(commands.Cog):
 
         if ctx.guild.banner:
             emb.set_image(url=ctx.guild.banner)
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -118,6 +119,7 @@ class Information(commands.Cog):
                         f'{slowmode}{category}{topic}'
                         f'> **Создан** - <t:{int(channel.created_at.timestamp())}:D>',
             color=BotConfig['OrangeColor'])
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
