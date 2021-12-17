@@ -59,7 +59,7 @@ class Settings(commands.Cog):
                 emb = discord.Embed(title='Ошибка:',
                     description=f'> **Префикс не должен быть больше 3 символов!**',
                     color=BotConfig['RedColor'])
-                
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
