@@ -21,6 +21,7 @@ class Fun(commands.Cog):
                         f'> **{BotPrefix(self.bot, ctx.message)[2]}activity chess** - шахматы в голосовом канале\n'
                         f'> **{BotPrefix(self.bot, ctx.message)[2]}activity poker** - покер в голосовом канале',
             color=BotConfig['OrangeColor'])
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -53,7 +54,7 @@ class Fun(commands.Cog):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
                 color=BotConfig['RedColor'])
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -86,7 +87,7 @@ class Fun(commands.Cog):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
                 color=BotConfig['RedColor'])
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -119,7 +120,7 @@ class Fun(commands.Cog):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы должны находиться в голосовом канале при использовании команды!**',
                 color=BotConfig['RedColor'])
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -142,7 +143,7 @@ class Fun(commands.Cog):
                 description=f'> **{ctx.message.author.mention} поцеловал {member.mention}!**',
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('kiss'))
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -165,7 +166,7 @@ class Fun(commands.Cog):
                 description=f'> **{ctx.message.author.mention} обнял {member.mention}!**',
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('hug'))
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -188,7 +189,7 @@ class Fun(commands.Cog):
                 description=f'> **{ctx.message.author.mention} дал пощёчину {member.mention}!**',
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('slap'))
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -211,7 +212,7 @@ class Fun(commands.Cog):
                 description=f'> **{ctx.message.author.mention} погладил {member.mention}!**',
                 color=BotConfig['OrangeColor'])
             emb.set_image(url=nekos.img('pat'))
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
