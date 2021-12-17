@@ -50,7 +50,8 @@ class Develop(commands.Cog):
                                 f'> **Входные данные** - \n```py\n{code}\n```\n'
                                 f'> **Выходные данные** - \n```py\n{exception}\n```\n',
                     color=BotConfig['RedColor'])
-
+        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb, view=view)
 
 
