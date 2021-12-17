@@ -7,10 +7,6 @@ from utils.config import BotConfig
 from utils.functions import BotPrefix
 
 
-view = discord.ui.View()
-view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
-
-
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -20,6 +16,9 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def activity(self, ctx):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+
         emb = discord.Embed(title='Помощь по команде:',
             description=f'> **{BotPrefix(self.bot, ctx.message)[2]}activity youtube** - YouTube в голосовом канале\n'
                         f'> **{BotPrefix(self.bot, ctx.message)[2]}activity chess** - шахматы в голосовом канале\n'
@@ -33,6 +32,8 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def youtube(self, ctx):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if ctx.author.voice:
             data = {
                 'max_age': 3600,
@@ -66,6 +67,8 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def chess(self, ctx):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if ctx.author.voice:
             data = {
                 'max_age': 3600,
@@ -99,6 +102,8 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True, create_instant_invite=True)
     async def poker(self, ctx):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if ctx.author.voice:
             data = {
                 'max_age': 3600,
@@ -132,6 +137,8 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def kiss(self, ctx, member: discord.Member=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not member:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
@@ -155,6 +162,8 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def hug(self, ctx, member: discord.Member=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not member:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
@@ -178,6 +187,8 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def slap(self, ctx, member: discord.Member=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not member:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
@@ -201,6 +212,8 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def pat(self, ctx, member: discord.Member=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not member:
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не указали участника!**',
