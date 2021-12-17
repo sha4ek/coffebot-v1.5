@@ -32,12 +32,14 @@ class Events(commands.Cog):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы указали несуществующего участника или того, кого нет на сервере!**',
                 color=BotConfig['RedColor'])
+            emb.set_footer(text=BotConfig['Slashes'])
             await ctx.send(embed=emb)
 
         elif isinstance(error, commands.MissingPermissions):
             emb = discord.Embed(title='Ошибка:',
                 description=f'> **У вас отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**',
                 color=BotConfig['RedColor'])
+            emb.set_footer(text=BotConfig['Slashes'])
             await ctx.send(embed=emb)
 
         elif isinstance(error, commands.BotMissingPermissions):
@@ -48,27 +50,31 @@ class Events(commands.Cog):
                     description=f'> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions )}" на использование команды!**',
                     color=BotConfig['RedColor']
                     )
+                emb.set_footer(text=BotConfig['Slashes'])
                 await ctx.author.send(embed=emb)
 
             elif not permissions.embed_links:
-                await ctx.send(f'**Ошибка:**\n> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**')
+                await ctx.send(f'**Ошибка:**\n> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**\n{BotConfig['Slashes'])}')
             
             else:
                 emb = discord.Embed(title='Ошибка:',
                     description=f'> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**',
                     color=BotConfig['RedColor'])
+                emb.set_footer(text=BotConfig['Slashes'])
                 await ctx.send(embed=emb)
 
         elif isinstance(error, commands.NotOwner):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не разработчик бота!**',
                 color=BotConfig['RedColor'])
+            emb.set_footer(text=BotConfig['Slashes'])
             await ctx.send(embed=emb)
 
         elif isinstance(error, commands.BadArgument):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы указали неверный аргумент!**',
                 color=BotConfig['RedColor'])
+            emb.set_footer(text=BotConfig['Slashes'])
             await ctx.send(embed=emb)
 
         else:
@@ -77,6 +83,7 @@ class Events(commands.Cog):
             emb = discord.Embed(title='Ошибка:',
                 description=f'> **Произошла неизвестная ошибка!**',
                 color=BotConfig['RedColor'])
+            emb.set_footer(text=BotConfig['Slashes'])
             emb1 = discord.Embed(title='Неизвестная ошибка:',
                 description=f'> **Сервер** - {ctx.guild.name}\n'
                             f'> **Пользователь** - {ctx.author} ({ctx.author.id})\n'
