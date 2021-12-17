@@ -3,6 +3,9 @@ from disnake.ext import commands
 from utils.config import BotConfig
 from utils.functions import BotPostfix
 
+view = discord.ui.View()
+view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -30,7 +33,7 @@ class Moderation(commands.Cog):
                 description=f'> **Из чата удалено {amount} {BotPostfix(amount, "сообщение", "сообщения", "сообщений")}!**',
                 color=BotConfig['GreenColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -88,7 +91,7 @@ class Moderation(commands.Cog):
             
             await ctx.guild.ban(member, reason=reason)
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -146,7 +149,7 @@ class Moderation(commands.Cog):
             
             await ctx.guild.kick(member, reason=reason)
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -175,7 +178,7 @@ class Moderation(commands.Cog):
                     description=f'> **Участник не забанен на сервере!**',
                     color=BotConfig['RedColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
 def setup(bot):
