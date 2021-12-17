@@ -2,6 +2,9 @@ import disnake as discord
 from disnake.ext import commands
 from utils.config import BotConfig
 
+view = discord.ui.View()
+view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+
 
 class General(commands.Cog):
     def __init__(self, bot):
@@ -18,7 +21,7 @@ class General(commands.Cog):
             color=BotConfig['OrangeColor'])
         emb.set_image(url=user.avatar)
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
 
 
     @commands.command()
@@ -73,7 +76,7 @@ class General(commands.Cog):
                         **-** добавлены команды `help`, `stats`, `yt`, `poker`, `chess`""",
             color=BotConfig['OrangeColor'])
         emb.set_footer(text=BotConfig['Slashes'])
-        await ctx.send(embed=emb)
+        await ctx.send(embed=emb, view=view)
         
 
 def setup(bot):
