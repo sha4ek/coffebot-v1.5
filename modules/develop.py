@@ -14,7 +14,7 @@ class Develop(commands.Cog):
     @commands.is_owner()
     async def eval(self, ctx, *, ucode=None):
         view = disnake.ui.View()
-        view.add_item(disnake.ui.Button(label='Пригласить', url=BotConfig['Invite']))
+        view.add_item(disnake.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         
         if not ucode:
             emb = discord.Embed(title='Ошибка:',
