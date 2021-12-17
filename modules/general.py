@@ -17,6 +17,7 @@ class General(commands.Cog):
         emb = discord.Embed(title=f'Аватар {user.name}:',
             color=BotConfig['OrangeColor'])
         emb.set_image(url=user.avatar)
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -71,6 +72,7 @@ class General(commands.Cog):
                         f"""> **__CoffeeBot v1 (<t:1629637330:D>):__**
                         **-** добавлены команды `help`, `stats`, `yt`, `poker`, `chess`""",
             color=BotConfig['OrangeColor'])
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
         
 
