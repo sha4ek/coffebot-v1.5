@@ -8,10 +8,6 @@ from utils.config import BotConfig
 from utils.translations import DiscordStatuses, DiscordSlowmods, DiscordVerificationLevel
 
 
-view = discord.ui.View()
-view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
-
-
 class Information(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -21,6 +17,8 @@ class Information(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def _botstats(self, ctx):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         size_name = ('б', 'кб', 'мб', 'гб', 'тб')
 
         used = psutil.Process(os.getpid()).memory_info().rss
@@ -49,6 +47,8 @@ class Information(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def _userinfo(self, ctx, member: discord.Member=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         user = ctx.author if not member else member
 
         activities = ''
@@ -80,6 +80,8 @@ class Information(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def _guildinfo(self, ctx):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if ctx.guild.verification_level == discord.VerificationLevel.none: verification_level = ''
         else: verification_level = f'> **Уровень верификации** - {DiscordVerificationLevel[str(ctx.guild.verification_level)]}\n'
 
@@ -106,6 +108,8 @@ class Information(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def _channelinfo(self, ctx, text_channel: discord.TextChannel=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         channel = ctx.channel if not text_channel else text_channel
 
         if channel.slowmode_delay == 0: slowmode = ''
