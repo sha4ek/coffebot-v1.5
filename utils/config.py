@@ -30,7 +30,7 @@ BotConfig = {
     # Версия бота
     'BotVersion': '1.5',
     # Ссылка на приглашение бота
-    'BotInvite': 'https://discord.com/api/oauth2/authorize?client_id=875927971649712148&permissions=92167&scope=bot',
+    'BotInvite': 'https://discord.com/api/oauth2/authorize?client_id=875927971649712148&permissions=92167&scope=bot%20applications.commands',
     # Канал аудита неизвестных ошибок
     'ErrorsLogChannel': 896215788455886849,
     # Канал аудита серверов
