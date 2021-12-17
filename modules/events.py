@@ -23,6 +23,9 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
+        
         ignored = commands.CommandNotFound, commands.CommandOnCooldown
 
         if isinstance(error, ignored):
@@ -33,14 +36,14 @@ class Events(commands.Cog):
                 description='> **Вы указали несуществующего участника или того, кого нет на сервере!**',
                 color=BotConfig['RedColor'])
             emb.set_footer(text=BotConfig['Slashes'])
-            await ctx.send(embed=emb)
+            await ctx.send(embed=emb, view=view)
 
         elif isinstance(error, commands.MissingPermissions):
             emb = discord.Embed(title='Ошибка:',
                 description=f'> **У вас отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**',
                 color=BotConfig['RedColor'])
             emb.set_footer(text=BotConfig['Slashes'])
-            await ctx.send(embed=emb)
+            await ctx.send(embed=emb, view=view)
 
         elif isinstance(error, commands.BotMissingPermissions):
             permissions = ctx.guild.me.guild_permissions
@@ -51,7 +54,7 @@ class Events(commands.Cog):
                     color=BotConfig['RedColor']
                     )
                 emb.set_footer(text=BotConfig['Slashes'])
-                await ctx.author.send(embed=emb)
+                await ctx.author.send(embed=emb, view=view)
 
             elif not permissions.embed_links:
                 await ctx.send(f'**Ошибка:**\n> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**\n{BotConfig["Slashes"])}')
@@ -61,21 +64,21 @@ class Events(commands.Cog):
                     description=f'> **У бота отсутствуют права "{", ".join(DiscordPermissions[permissions] for permissions in error.missing_permissions)}" на использование команды!**',
                     color=BotConfig['RedColor'])
                 emb.set_footer(text=BotConfig['Slashes'])
-                await ctx.send(embed=emb)
+                await ctx.send(embed=emb, view=view)
 
         elif isinstance(error, commands.NotOwner):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы не разработчик бота!**',
                 color=BotConfig['RedColor'])
             emb.set_footer(text=BotConfig['Slashes'])
-            await ctx.send(embed=emb)
+            await ctx.send(embed=emb, view=view)
 
         elif isinstance(error, commands.BadArgument):
             emb = discord.Embed(title='Ошибка:',
                 description='> **Вы указали неверный аргумент!**',
                 color=BotConfig['RedColor'])
             emb.set_footer(text=BotConfig['Slashes'])
-            await ctx.send(embed=emb)
+            await ctx.send(embed=emb, view=view)
 
         else:
             ErrorsLogChannel = self.bot.get_channel(BotConfig['ErrorsLogChannel'])
@@ -92,7 +95,7 @@ class Events(commands.Cog):
                 color=BotConfig['RedColor'])
             
             if ctx.command.name != 'eval':
-                await ctx.send(embed=emb)
+                await ctx.send(embed=emb, view=view)
                 await ErrorsLogChannel.send(embed=emb1)
                 print(f'[ERROR] Error occurred in the "{ctx.command}" command! More:')
                 raise error
