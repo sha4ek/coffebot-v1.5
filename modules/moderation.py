@@ -29,7 +29,7 @@ class Moderation(commands.Cog):
             emb = discord.Embed(title='Очистка чата:',
                 description=f'> **Из чата удалено {amount} {BotPostfix(amount, "сообщение", "сообщения", "сообщений")}!**',
                 color=BotConfig['GreenColor'])
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -87,7 +87,7 @@ class Moderation(commands.Cog):
                 pass
             
             await ctx.guild.ban(member, reason=reason)
-
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -145,7 +145,7 @@ class Moderation(commands.Cog):
                 pass
             
             await ctx.guild.kick(member, reason=reason)
-
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
@@ -174,7 +174,7 @@ class Moderation(commands.Cog):
                 emb = discord.Embed(title='Ошибка:',
                     description=f'> **Участник не забанен на сервере!**',
                     color=BotConfig['RedColor'])
-        
+        emb.set_footer(text=BotConfig['Slashes'])
         await ctx.send(embed=emb)
 
 
