@@ -3,9 +3,6 @@ from disnake.ext import commands
 from utils.config import BotConfig, MongoConfig
 from utils.functions import BotPrefix
 
-view = discord.ui.View()
-view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
-
 
 class Settings(commands.Cog):
     def __init__(self, bot):
@@ -17,6 +14,8 @@ class Settings(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def _setprefix(self, ctx, new_prefix=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         if not new_prefix:
             emb = discord.Embed(title=f'Помощь по команде:',
                 description=f'> **{BotPrefix(self.bot, ctx.message)[2]}set-prefix [префикс]** - установить серверный префикс\n'
