@@ -2,9 +2,6 @@ import disnake as discord
 from disnake.ext import commands
 from utils.config import BotConfig
 
-view = discord.ui.View()
-view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
-
 
 class General(commands.Cog):
     def __init__(self, bot):
@@ -15,6 +12,8 @@ class General(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def avatar(self, ctx, member: discord.Member=None):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         user = ctx.author if not member else member
 
         emb = discord.Embed(title=f'Аватар {user.name}:',
@@ -38,6 +37,8 @@ class General(commands.Cog):
     @commands.cooldown(1, 2.0, commands.BucketType.user)
     @commands.bot_has_permissions(send_messages=True, embed_links=True)
     async def _lastupdates(self, ctx):
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label='Перепригласить', url=BotConfig['BotInvite']))
         emb = discord.Embed(title='Последние обновления:',
             description=f"""> **__CoffeeBot v1.5 (<t:1636180792:D>):__**
                         **-** улучшено взаимодействие с базой данных и обработчик ошибок
